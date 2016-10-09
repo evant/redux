@@ -1,0 +1,9 @@
+include ':redux-android', ':sample-android'
+rootProject.name = 'redux'
+include 'redux-core'
+include 'redux-rx'
+include 'sample'
+include 'redux-android'
+include 'redux-thunk'
+include 'redux-replay'
+
