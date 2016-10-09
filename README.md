@@ -43,7 +43,7 @@ store.dispatch(new MyAction());
 
 ## Android
 
-I suggest you use the `StateLoader` as it will tie your state updates with the activity/fragment lifecycle
+I suggest you use the `StateLoader` as it will tie your state updates with the activity/fragment lifecycle and ensure callbacks happen on the main thread.
 ```java
 public class MyActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<State> {
   ListenerStore<Action, State> store = ...;
