@@ -71,7 +71,7 @@ public class MyActivity extends AppCompatActivity implements LoaderManager.Loade
 
 ## Composing Reducders
 
-It's common you'd want to switch on actions values or class type. `Reducers.matcValue()` and `Reducers.matchClass()` makes this easy.
+It's common you'd want to switch on actions values or class type. `Reducers.matchValue()` and `Reducers.matchClass()` makes this easy.
 ```java
 Reducer<String, State> reducer = Reducers.matchValue()
   .when("action1", new Action1Reducer())
