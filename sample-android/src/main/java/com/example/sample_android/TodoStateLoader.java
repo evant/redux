@@ -18,7 +18,7 @@ public class TodoStateLoader extends StateLoader<TodoList> {
     private static final ReplayMiddleware<Object, TodoList> REPLAY_MIDDLEWARE = new ReplayMiddleware<>();
 
     public TodoStateLoader(Context context) {
-        super(context, ListenerStore.create(
+        super(context, new ListenerStore<>(
                 TodoList.initial(),
                 TodoListReducers.reducer(),
                 new ThunkMiddleware<Object, TodoList>(),

@@ -14,7 +14,7 @@ public abstract class AbstractStore<A, S> implements Store<A, S> {
     private Middleware<A> end;
 
     @SafeVarargs
-    protected AbstractStore(S initialState, final Reducer<A, S> reducer, MiddlewareFactory<A, S>... middleware) {
+    public AbstractStore(S initialState, final Reducer<A, S> reducer, MiddlewareFactory<A, S>... middleware) {
         if (reducer == null) {
             throw new NullPointerException("reducer == null");
         }

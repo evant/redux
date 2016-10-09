@@ -11,11 +11,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class ListenerStore<A, S> extends AbstractStore<A, S> {
 
-    @SafeVarargs
-    public static <A, S> ListenerStore<A, S> create(S initialState, Reducer<A, S> reducer, MiddlewareFactory<A, S>... middleware) {
-        return new ListenerStore<>(initialState, reducer, middleware);
-    }
-
     private volatile S state;
 
     private final CopyOnWriteArrayList<Listener<S>> listeners = new CopyOnWriteArrayList<>();

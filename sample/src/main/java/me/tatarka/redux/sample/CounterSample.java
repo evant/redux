@@ -38,7 +38,7 @@ public class CounterSample {
     }
 
     public static void main(String[] args) {
-        ObservableStore<Object, Integer> store = ObservableStore.create(0, counter, new LogMiddleware<>());
+        ObservableStore<Object, Integer> store = new ObservableStore<>(0, counter, new LogMiddleware<>());
         store.observable().subscribe(count -> System.out.println("state: " + count));
         store.dispatch(new Increment());
         store.dispatch(new Add(2));

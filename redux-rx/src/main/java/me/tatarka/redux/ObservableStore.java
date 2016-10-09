@@ -9,12 +9,7 @@ import rx.functions.Cancellable;
 public class ObservableStore<A, S> extends ListenerStore<A, S> {
 
     @SafeVarargs
-    public static <A, S> ObservableStore<A, S> create(S initialState, Reducer<A, S> reducer, MiddlewareFactory<A, S>... middleware) {
-        return new ObservableStore<>(initialState, reducer, middleware);
-    }
-
-    @SafeVarargs
-    ObservableStore(S initialState, Reducer<A, S> reducer, MiddlewareFactory<A, S>... middleware) {
+    public ObservableStore(S initialState, Reducer<A, S> reducer, MiddlewareFactory<A, S>... middleware) {
         super(initialState, reducer, middleware);
     }
 
