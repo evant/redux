@@ -12,7 +12,7 @@ import rx.observers.SerializedObserver;
  */
 class StoreObservable {
 
-    static <S> Observable<S> observable(final ObservableStore<?, S> store) {
+    static <S> Observable<S> observable(final ObservableStore<S> store) {
         return Observable.fromEmitter(new Action1<Emitter<S>>() {
             @Override
             public void call(Emitter<S> emitter) {
@@ -23,10 +23,10 @@ class StoreObservable {
 
     private static class EmitterListener<S> implements ObservableStore.Listener<S>, Cancellable {
 
-        final ObservableStore<?, S> store;
+        final ObservableStore<S> store;
         final Observer<S> observer;
 
-        EmitterListener(Emitter<S> emitter, ObservableStore<?, S> store) {
+        EmitterListener(Emitter<S> emitter, ObservableStore<S> store) {
             this.observer = new SerializedObserver<>(emitter);
             this.store = store;
             emitter.setCancellation(this);

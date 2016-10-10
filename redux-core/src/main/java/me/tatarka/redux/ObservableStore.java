@@ -9,14 +9,14 @@ import rx.Observable;
  * A simple store that lets you observe state changes. While this class is thread safe, listener
  * callbacks happen on the thread dispatch was called on so you must be able to handle that.
  */
-public class ObservableStore<A, S> extends AbstractStore<A, S> {
+public class ObservableStore<S> extends AbstractStore<S> {
 
     private volatile S state;
 
     private final CopyOnWriteArrayList<Listener<S>> listeners = new CopyOnWriteArrayList<>();
 
     @SafeVarargs
-    public ObservableStore(S initialState, Reducer<A, S> reducer, Middleware<A, S>... middleware) {
+    public ObservableStore(S initialState, Reducer<Object, S> reducer, Middleware<S>... middleware) {
         super(initialState, reducer, middleware);
         state = initialState;
     }

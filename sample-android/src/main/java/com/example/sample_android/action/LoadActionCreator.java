@@ -17,10 +17,10 @@ public class LoadActionCreator {
         this.datastore = datastore;
     }
 
-    public Thunk<Object, TodoList> load() {
-        return new Thunk<Object, TodoList>() {
+    public Thunk<TodoList> load() {
+        return new Thunk<TodoList>() {
             @Override
-            public void run(final Store<Object, TodoList> store) {
+            public void run(final Store<TodoList> store) {
                 datastore.get(new Datastore.Callback() {
                     @Override
                     public void onList(List<TodoItem> items) {

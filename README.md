@@ -12,7 +12,7 @@ I've seen a few of these floating around, but this one has some specific benefit
 
 Create a store.
 ```java
-ObservableStore<Action, State> store = new Observable<>(initialState, reducer, middleware...);
+ObservableStore<State> store = new Observable<>(initialState, reducer, middleware...);
 ```
 
 Get the current state.
@@ -45,7 +45,7 @@ store.dispatch(new MyAction());
 I suggest you use the `StateLoader` as it will tie your state updates with the activity/fragment lifecycle and ensure callbacks happen on the main thread.
 ```java
 public class MyActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<State> {
-  ObservableStore<Action, State> store = ...;
+  ObservableStore<State> store = ...;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -95,11 +95,11 @@ You can also run a sequence of reducers with `Reducers.all(reducer1, reducer2, .
 Allows you to dispatch async functions as actions.
 
 ```java
-ObservableStore<Action, State> store = new ObservableStore<>(initialState, reducer, new ThunkMiddleware<>());
+ObservableStore<State> store = new ObservableStore<>(initialState, reducer, new ThunkMiddleware<State>());
 
-store.dispatch(new Thunk<Action, State>() {
+store.dispatch(new Thunk<State>() {
   @Override
-  public void run(Store<Action, State> store) {
+  public void run(Store<State> store) {
     store.dispatch(new StartLoading());
     someAsyncCall(new Runnable() {
       @Override
@@ -116,7 +116,7 @@ store.dispatch(new Thunk<Action, State>() {
 Alternatively, you can use the `ObservableMiddleware` to dispatch a stream of actions.
 
 ```java
-ObservableStore<Action, State> store = new ObservableStore<>(initialState, reducer, new ObservableMiddleware<>());
+ObservableStore<State> store = new ObservableStore<>(initialState, reducer, new ObservableMiddleware<State>());
 
 store.dispatch(callThatReturnsObservable()
     .map(result -> new StopLoading())

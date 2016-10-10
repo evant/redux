@@ -71,7 +71,7 @@ public class CompositeStateSample {
     }
 
     public static void main(String[] args) {
-        ObservableStore<Object, Person> store = new ObservableStore<>(new Person("nobody", 0), updatePerson, new LogMiddleware<>());
+        ObservableStore<Person> store = new ObservableStore<>(new Person("nobody", 0), updatePerson, new LogMiddleware<>());
         store.observable().subscribe(person -> System.out.println("state: " + person));
         store.dispatch(new ChangeName("Bob"));
         store.dispatch(new IncrementAge());

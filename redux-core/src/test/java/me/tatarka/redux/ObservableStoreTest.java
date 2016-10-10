@@ -19,7 +19,7 @@ public class ObservableStoreTest {
 
     @Test
     public void addListener_receives_initial_state() {
-        ObservableStore<Object, String> store = new ObservableStore<>("test", Reducers.<Object, String>id());
+        ObservableStore<String> store = new ObservableStore<>("test", Reducers.<Object, String>id());
         TestListener<String> testListener = new TestListener<>();
         store.addListener(testListener);
 
@@ -28,7 +28,7 @@ public class ObservableStoreTest {
 
     @Test
     public void addListener_receives_updated_state() {
-        ObservableStore<Object, String> store = new ObservableStore<>("test1", Reducers.<Object, String>id());
+        ObservableStore<String> store = new ObservableStore<>("test1", Reducers.<Object, String>id());
         TestListener<String> testListener = new TestListener<>();
         store.addListener(testListener);
         store.setState("test2");
@@ -38,7 +38,7 @@ public class ObservableStoreTest {
 
     @Test
     public void removeListener_no_longer_receives_updates() {
-        ObservableStore<Object, String> store = new ObservableStore<>("test1", Reducers.<Object, String>id());
+        ObservableStore<String> store = new ObservableStore<>("test1", Reducers.<Object, String>id());
         TestListener<String> testListener = new TestListener<>();
         store.addListener(testListener);
         store.removeListener(testListener);
@@ -50,7 +50,7 @@ public class ObservableStoreTest {
     @Test
     public void subscription_receives_initial_state() {
         TestSubscriber<String> testSubscriber = new TestSubscriber<>();
-        ObservableStore<Object, String> store = new ObservableStore<>("test1", Reducers.<Object, String>id());
+        ObservableStore<String> store = new ObservableStore<>("test1", Reducers.<Object, String>id());
         store.observable().subscribe(testSubscriber);
 
         testSubscriber.assertValue("test1");
@@ -59,7 +59,7 @@ public class ObservableStoreTest {
     @Test
     public void subscription_receives_updated_state() {
         TestSubscriber<String> testSubscriber = new TestSubscriber<>();
-        ObservableStore<Object, String> store = new ObservableStore<>("test1", Reducers.<Object, String>id());
+        ObservableStore<String> store = new ObservableStore<>("test1", Reducers.<Object, String>id());
         store.observable().subscribe(testSubscriber);
         store.setState("test2");
 
@@ -69,7 +69,7 @@ public class ObservableStoreTest {
     @Test
     public void canceled_subscription_no_longer_receives_updates() {
         TestSubscriber<String> testSubscriber = new TestSubscriber<>();
-        ObservableStore<Object, String> store = new ObservableStore<>("test1", Reducers.<Object, String>id());
+        ObservableStore<String> store = new ObservableStore<>("test1", Reducers.<Object, String>id());
         store.observable().subscribe(testSubscriber).unsubscribe();
         store.setState("test2");
 
@@ -78,7 +78,7 @@ public class ObservableStoreTest {
     
     @Test
     public void removing_listener_while_dispatching_does_not_cause_error() {
-        final ObservableStore<Object, String> store = new ObservableStore<>("test1", Reducers.<Object, String>id());
+        final ObservableStore<String> store = new ObservableStore<>("test1", Reducers.<Object, String>id());
         TestListener<String> testListener = new TestListener<String>() {
             int count = 0;
             
@@ -103,7 +103,7 @@ public class ObservableStoreTest {
         
         ExecutorService exec = Executors.newFixedThreadPool(JOB_COUNT);
         TestSubscriber<String> testSubscriber = new TestSubscriber<>();
-        final ObservableStore<Object, String> store = new ObservableStore<>("test", Reducers.<Object, String>id());
+        final ObservableStore<String> store = new ObservableStore<>("test", Reducers.<Object, String>id());
         store.observable().subscribe(testSubscriber);
 
         List<Callable<Void>> jobs = new ArrayList<>(JOB_COUNT);

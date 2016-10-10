@@ -40,8 +40,8 @@ import me.tatarka.redux.Store;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<TodoList> {
     
-    Store<Object, TodoList> store;
-    ReplayMiddleware<Object, TodoList> replayMiddleware;
+    Store<TodoList> store;
+    ReplayMiddleware<TodoList> replayMiddleware;
     Adapter adapter = new Adapter();
     ActionListAdapter actionListAdapter = new ActionListAdapter();
     ProgressBar loading;
@@ -210,14 +210,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         class Holder extends RecyclerView.ViewHolder {
-            final Store<Object, TodoList> store;
+            final Store<TodoList> store;
             final CheckBox checkBox;
             final ImageButton edit;
             final ImageButton delete;
 
             TodoItem item;
 
-            public Holder(final Store<Object, TodoList> store, View itemView) {
+            public Holder(final Store<TodoList> store, View itemView) {
                 super(itemView);
                 checkBox = (CheckBox) itemView.findViewById(R.id.item);
                 edit = (ImageButton) itemView.findViewById(R.id.edit);

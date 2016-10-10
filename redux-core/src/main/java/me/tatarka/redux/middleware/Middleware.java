@@ -5,16 +5,14 @@ import me.tatarka.redux.Store;
 /**
  * Middleware allows you to implement cross-cutting concerns like logging, crash reporting, etc. by
  * intercepting every action.
- *
- * @param <A> the action type.
  */
-public interface Middleware<A, S> {
+public interface Middleware<S> {
 
     /**
      * Called when the middleware is applied to the store. This allows you to obtain a reference to
      * get the current state and dispatch actions.
      */
-    void create(Store<A, S> store);
+    void create(Store<S> store);
 
     /**
      * Called when an action is dispatched.
@@ -24,9 +22,9 @@ public interface Middleware<A, S> {
      *               changed or not at all to drop the action.
      * @param action This action that was dispatched.
      */
-    void dispatch(Next<A> next, A action);
+    void dispatch(Next next, Object action);
 
-    interface Next<A> {
-        void next(A action);
+    interface Next {
+        void next(Object action);
     }
 }

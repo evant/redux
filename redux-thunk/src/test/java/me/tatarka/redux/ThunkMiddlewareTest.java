@@ -12,15 +12,15 @@ public class ThunkMiddlewareTest {
 
     @Test
     public void thunk_run_when_dispatched() {
-        Thunk<String, String> thunk = new Thunk<String, String>() {
+        Thunk<String> thunk = new Thunk<String>() {
             @Override
-            public void run(Store<String, String> store) {
+            public void run(Store<String> store) {
                 store.dispatch("action1");
                 store.dispatch("action2");
             }
         };
-        TestMiddleware<Object, String> testMiddleware = new TestMiddleware<>();
-        ObservableStore<Object, String> store = new ObservableStore<>("test1", Reducers.<Object, String>id(), new ThunkMiddleware<Object, String>(), testMiddleware);
+        TestMiddleware<String> testMiddleware = new TestMiddleware<>();
+        ObservableStore<String> store = new ObservableStore<>("test1", Reducers.<Object, String>id(), new ThunkMiddleware<String>(), testMiddleware);
         store.dispatch(thunk);
 
         assertEquals("action1", testMiddleware.actions().get(0));

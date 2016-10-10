@@ -5,7 +5,7 @@ package me.tatarka.redux;
  * on dispatching from multiple threads, {@link #state()} and {@link #setState(Object)} must be
  * thread-safe.
  */
-public interface Store<A, S> {
+public interface Store<S> {
 
     /**
      * Returns the current state of the store.
@@ -20,7 +20,8 @@ public interface Store<A, S> {
     void setState(S state);
 
     /**
-     * Dispatch an action to update the store by running the reducer and middleware.
+     * Dispatch an action to update the store by running the reducer and middleware. The action
+     * must not be null.
      */
-    void dispatch(A action);
+    void dispatch(Object action);
 }

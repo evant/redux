@@ -8,16 +8,16 @@ import java.util.Set;
 
 import me.tatarka.redux.middleware.Middleware;
 
-public class ReplayMiddleware<A, S> implements Middleware<A, S> {
+public class ReplayMiddleware<S> implements Middleware<S> {
 
     private S initialState;
-    private Store<A, S> store;
-    private final ArrayList<A> actions = new ArrayList<>();
+    private Store<S> store;
+    private final ArrayList<Object> actions = new ArrayList<>();
     private Set<Integer> disabled = new HashSet<>();
     private boolean runningActions;
 
     @Override
-    public void create(Store<A, S> store) {
+    public void create(Store<S> store) {
         this.initialState = store.state();
         this.store = store;
         actions.clear();
@@ -25,14 +25,14 @@ public class ReplayMiddleware<A, S> implements Middleware<A, S> {
     }
 
     @Override
-    public void dispatch(Next<A> next, A action) {
+    public void dispatch(Next next, Object action) {
         if (!runningActions) {
             actions.add(action);
         }
         next.next(action);
     }
 
-    public List<A> actions() {
+    public List<Object> actions() {
         return Collections.unmodifiableList(actions);
     }
 
@@ -55,7 +55,7 @@ public class ReplayMiddleware<A, S> implements Middleware<A, S> {
         runningActions = true;
         for (int i = 0; i < actions.size(); i++) {
             if (!disabled.contains(i)) {
-                A action = actions.get(i);
+                Object action = actions.get(i);
                 store.dispatch(action);
             }
         }

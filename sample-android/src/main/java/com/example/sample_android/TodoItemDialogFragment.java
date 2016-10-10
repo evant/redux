@@ -35,7 +35,7 @@ public class TodoItemDialogFragment extends DialogFragment {
         return fragment;
     }
 
-    Store<Object, TodoList> store;
+    Store<TodoList> store;
     int id;
 
     @Override

@@ -5,28 +5,28 @@ import rx.Subscription;
 import rx.functions.Action1;
 import rx.subscriptions.CompositeSubscription;
 
-public class ObservableMiddleware<A, S> implements Middleware<A, S>, Subscription {
+public class ObservableMiddleware<S> implements Middleware<S>, Subscription {
 
     private final CompositeSubscription subscription = new CompositeSubscription();
-    private Action1<A> dispatchAction;
+    private Action1<Object> dispatchAction;
 
     @Override
-    public void create(final Store<A, S> store) {
-        dispatchAction = new Action1<A>() {
+    public void create(final Store<S> store) {
+        dispatchAction = new Action1<Object>() {
             @Override
-            public void call(A action) {
+            public void call(Object action) {
                 store.dispatch(action);
             }
         };
     }
 
     @Override
-    public void dispatch(Next<A> next, A action) {
+    public void dispatch(Next next, Object action) {
         if (action instanceof rx.Observable) {
-            rx.Observable<? extends A> observable = (rx.Observable) action;
+            rx.Observable<?> observable = (rx.Observable) action;
             subscription.add(observable.subscribe(dispatchAction));
         } else if (action instanceof rx.Single) {
-            rx.Single<? extends A> single = (rx.Single) action;
+            rx.Single<?> single = (rx.Single) action;
             subscription.add(single.subscribe(dispatchAction));
         } else if (action instanceof rx.Completable) {
             rx.Completable completable = (rx.Completable) action;

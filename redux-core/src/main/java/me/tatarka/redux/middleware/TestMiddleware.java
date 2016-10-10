@@ -12,20 +12,20 @@ import me.tatarka.redux.Store;
  * @param <A> the action type.
  * @param <S> the state type.
  */
-public class TestMiddleware<A, S> implements Middleware<A, S> {
+public class TestMiddleware<S> implements Middleware<S> {
 
-    private Store<A, S> store;
-    private List<A> actions = new ArrayList<>();
+    private Store<S> store;
+    private List<Object> actions = new ArrayList<>();
     private List<S> states = new ArrayList<>();
 
     @Override
-    public void create(final Store<A, S> store) {
+    public void create(final Store<S> store) {
         this.store = store;
         states.add(store.state());
     }
 
     @Override
-    public void dispatch(Next<A> next, A action) {
+    public void dispatch(Next next, Object action) {
         actions.add(action);
         next.next(action);
         states.add(store.state());
@@ -34,7 +34,7 @@ public class TestMiddleware<A, S> implements Middleware<A, S> {
     /**
      * Returns all actions that have been dispatched.
      */
-    public List<A> actions() {
+    public List<Object> actions() {
         return Collections.unmodifiableList(actions);
     }
 

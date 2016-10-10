@@ -20,7 +20,7 @@ public class ObservableMiddlewareTest {
                 return action.toString();
             }
         };
-        ObservableStore<Object, String> store = new ObservableStore<>("test1", reducer, new ObservableMiddleware<Object, String>());
+        ObservableStore<String> store = new ObservableStore<>("test1", reducer, new ObservableMiddleware<String>());
         TestSubscriber<String> testSubscriber = new TestSubscriber<>();
         store.observable().subscribe(testSubscriber);
         store.dispatch(rx.Observable.just("test2"));
@@ -36,7 +36,7 @@ public class ObservableMiddlewareTest {
                 return action.toString();
             }
         };
-        ObservableStore<Object, String> store = new ObservableStore<>("test1", reducer, new ObservableMiddleware<Object, String>());
+        ObservableStore<String> store = new ObservableStore<>("test1", reducer, new ObservableMiddleware<String>());
         TestSubscriber<String> testSubscriber = new TestSubscriber<>();
         store.observable().subscribe(testSubscriber);
         store.dispatch(rx.Observable.just("test2", "test3"));
@@ -52,7 +52,7 @@ public class ObservableMiddlewareTest {
                 return action.toString();
             }
         };
-        ObservableStore<Object, String> store = new ObservableStore<>("test1", reducer, new ObservableMiddleware<Object, String>());
+        ObservableStore<String> store = new ObservableStore<>("test1", reducer, new ObservableMiddleware<String>());
         TestSubscriber<String> testSubscriber = new TestSubscriber<>();
         store.observable().subscribe(testSubscriber);
         store.dispatch(rx.Single.just("test2"));
@@ -68,7 +68,7 @@ public class ObservableMiddlewareTest {
                 return action.toString();
             }
         };
-        ObservableStore<Object, String> store = new ObservableStore<>("test1", reducer, new ObservableMiddleware<Object, String>());
+        ObservableStore<String> store = new ObservableStore<>("test1", reducer, new ObservableMiddleware<String>());
         TestSubscriber<String> testSubscriber = new TestSubscriber<>();
         store.observable().subscribe(testSubscriber);
         final boolean[] completableCalled = new boolean[1];

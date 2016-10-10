@@ -12,7 +12,7 @@ public class TestMiddlewareTest {
 
     @Test
     public void states_includes_initial_state() {
-        TestMiddleware<Object, String> testMiddleware = new TestMiddleware<>();
+        TestMiddleware<String> testMiddleware = new TestMiddleware<>();
         new ObservableStore<>("test", Reducers.<Object, String>id(), testMiddleware);
 
         assertEquals("test", testMiddleware.states().get(0));
@@ -26,8 +26,8 @@ public class TestMiddlewareTest {
                 return "test2";
             }
         };
-        TestMiddleware<Object, String> testMiddleware = new TestMiddleware<>();
-        ObservableStore<Object, String> store = new ObservableStore<>("test1", reducer, testMiddleware);
+        TestMiddleware<String> testMiddleware = new TestMiddleware<>();
+        ObservableStore<String> store = new ObservableStore<>("test1", reducer, testMiddleware);
         store.dispatch("action");
 
         assertEquals("test2", testMiddleware.states().get(1));
@@ -35,8 +35,8 @@ public class TestMiddlewareTest {
 
     @Test
     public void action_after_dispatch() {
-        TestMiddleware<Object, String> testMiddleware = new TestMiddleware<>();
-        ObservableStore<Object, String> store = new ObservableStore<>("test", Reducers.<Object, String>id(), testMiddleware);
+        TestMiddleware<String> testMiddleware = new TestMiddleware<>();
+        ObservableStore<String> store = new ObservableStore<>("test", Reducers.<Object, String>id(), testMiddleware);
         store.dispatch("action");
 
         assertEquals("action", testMiddleware.actions().get(0));

@@ -7,14 +7,14 @@ import me.tatarka.redux.middleware.Middleware;
  * provide the backing storage for the state, returning it in {@link #state()} and updating it in
  * {@link #setState(Object)}.
  */
-public abstract class AbstractStore<A, S> implements Store<A, S> {
+public abstract class AbstractStore<S> implements Store<S> {
 
-    private final Middleware<A, S>[] middleware;
-    private final Middleware.Next<A>[] next;
-    private Middleware<A, S> end;
+    private final Middleware<S>[] middleware;
+    private final Middleware.Next[] next;
+    private Middleware<S> end;
 
     @SafeVarargs
-    public AbstractStore(S initialState, final Reducer<A, S> reducer, Middleware<A, S>... middleware) {
+    public AbstractStore(S initialState, final Reducer<Object, S> reducer, Middleware<S>... middleware) {
         if (reducer == null) {
             throw new NullPointerException("reducer == null");
         }
@@ -24,40 +24,40 @@ public abstract class AbstractStore<A, S> implements Store<A, S> {
             ProxyStore proxyStore = new ProxyStore(initialState);
             for (int i = 0; i < middleware.length; i++) {
                 final int index = i;
-                Middleware<A, S> m = middleware[index];
+                Middleware<S> m = middleware[index];
                 m.create(proxyStore);
                 this.middleware[index] = m;
-                this.next[index] = new Middleware.Next<A>() {
+                this.next[index] = new Middleware.Next() {
                     @Override
-                    public void next(A action) {
+                    public void next(Object action) {
                         dispatch(action, index + 1);
                     }
                 };
             }
             proxyStore.inConstructor = false;
         }
-        end = new Middleware<A, S>() {
+        end = new Middleware<S>() {
             @Override
-            public void create(Store<A, S> store) {
+            public void create(Store<S> store) {
 
             }
 
             @Override
-            public void dispatch(Next<A> next, A action) {
+            public void dispatch(Next next, Object action) {
                 setState(reducer.reduce(action, state()));
             }
         };
     }
 
     @Override
-    public final void dispatch(A action) {
+    public final void dispatch(Object action) {
         if (action == null) {
             throw new NullPointerException("action == null");
         }
         dispatch(action, 0);
     }
 
-    private void dispatch(A action, final int index) {
+    private void dispatch(Object action, final int index) {
         if (index >= middleware.length) {
             end.dispatch(null, action);
         } else {
@@ -65,7 +65,7 @@ public abstract class AbstractStore<A, S> implements Store<A, S> {
         }
     }
 
-    private class ProxyStore implements Store<A, S> {
+    private class ProxyStore implements Store<S> {
         final S initialState;
         boolean inConstructor = true;
 
@@ -87,7 +87,7 @@ public abstract class AbstractStore<A, S> implements Store<A, S> {
         }
 
         @Override
-        public void dispatch(A action) {
+        public void dispatch(Object action) {
             if (inConstructor) {
                 throw new IllegalStateException("cannot dispatch while store is being constructed");
             } else {
