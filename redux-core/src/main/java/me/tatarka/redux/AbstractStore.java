@@ -11,6 +11,7 @@ import me.tatarka.redux.middleware.MiddlewareFactory;
 public abstract class AbstractStore<A, S> implements Store<A, S> {
 
     private final Middleware<A>[] middleware;
+    private final Middleware.Next<A>[] next;
     private Middleware<A> end;
 
     @SafeVarargs
@@ -19,11 +20,19 @@ public abstract class AbstractStore<A, S> implements Store<A, S> {
             throw new NullPointerException("reducer == null");
         }
         this.middleware = new Middleware[middleware.length];
+        this.next = new Middleware.Next[middleware.length];
         if (middleware.length > 0) {
             ProxyStore proxyStore = new ProxyStore(initialState);
             for (int i = 0; i < middleware.length; i++) {
-                MiddlewareFactory<A, S> m = middleware[i];
-                this.middleware[i] = m.create(proxyStore);
+                final int index = i;
+                MiddlewareFactory<A, S> m = middleware[index];
+                this.middleware[index] = m.create(proxyStore);
+                this.next[index] = new Middleware.Next<A>() {
+                    @Override
+                    public void next(A action) {
+                        dispatch(action, index + 1);
+                    }
+                };
             }
             proxyStore.inConstructor = false;
         }
@@ -35,23 +44,6 @@ public abstract class AbstractStore<A, S> implements Store<A, S> {
         };
     }
 
-    /**
-     * Returns the current state of the store.
-     */
-    @Override
-    public abstract S state();
-
-    /**
-     * Sets the state of the store. Warning! You should not call this in normal application code,
-     * instead preferring to update it through dispatching an action. It is however, useful for
-     * tests.
-     */
-    @Override
-    public abstract void setState(S newState);
-
-    /**
-     * Dispatch an action to update the store by running the reducer and middleware.
-     */
     @Override
     public final void dispatch(A action) {
         if (action == null) {
@@ -64,12 +56,7 @@ public abstract class AbstractStore<A, S> implements Store<A, S> {
         if (index >= middleware.length) {
             end.dispatch(null, action);
         } else {
-            middleware[index].dispatch(new Middleware.Next<A>() {
-                @Override
-                public void next(A r) {
-                    AbstractStore.this.dispatch(r, index + 1);
-                }
-            }, action);
+            middleware[index].dispatch(next[index], action);
         }
     }
 

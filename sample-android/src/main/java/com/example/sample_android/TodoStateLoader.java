@@ -6,7 +6,7 @@ import com.example.sample_android.middleware.PersistenceMiddleware;
 import com.example.sample_android.reducer.TodoListReducers;
 import com.example.sample_android.state.TodoList;
 
-import me.tatarka.redux.ListenerStore;
+import me.tatarka.redux.ObservableStore;
 import me.tatarka.redux.LogMiddleware;
 import me.tatarka.redux.ReplayMiddleware;
 import me.tatarka.redux.StateLoader;
@@ -18,7 +18,7 @@ public class TodoStateLoader extends StateLoader<TodoList> {
     private static final ReplayMiddleware<Object, TodoList> REPLAY_MIDDLEWARE = new ReplayMiddleware<>();
 
     public TodoStateLoader(Context context) {
-        super(context, new ListenerStore<>(
+        super(context, new ObservableStore<>(
                 TodoList.initial(),
                 TodoListReducers.reducer(),
                 new ThunkMiddleware<Object, TodoList>(),

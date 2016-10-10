@@ -8,10 +8,10 @@ import android.support.v4.content.Loader;
 
 public class StateLoader<S> extends Loader<S> {
 
-    protected final ListenerStore<?, S> store;
+    protected final ObservableStore<?, S> store;
     private final ResultHandler handler = new ResultHandler();
 
-    public StateLoader(Context context, ListenerStore<?, S> store) {
+    public StateLoader(Context context, ObservableStore<?, S> store) {
         super(context);
         this.store = store;
     }
@@ -29,7 +29,7 @@ public class StateLoader<S> extends Loader<S> {
     /**
      * Listens to state changes and posts them to the main thread.
      */
-    class ResultHandler extends Handler implements ListenerStore.Listener<S> {
+    class ResultHandler extends Handler implements ObservableStore.Listener<S> {
 
         ResultHandler() {
             super(Looper.getMainLooper());

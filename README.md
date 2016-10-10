@@ -4,7 +4,7 @@ Redux ported to java/android
 I've seen a few of these floating around, but this one has some specific benefits over other implementations.
 * Any object can be used as an action or state.
 * Built-in functions to help compose reducers
-* Middlware that's actually implemented like you'd expect.
+* Middleware that's actually implemented like you'd expect.
 * A port of the thunk middleware.
 * A fully-fleshed android sample.
 
@@ -12,7 +12,7 @@ I've seen a few of these floating around, but this one has some specific benefit
 
 Create a store.
 ```java
-ListenerStore<Action, State> store = new ListenerStore<>(initialState, reducer, middleware...);
+ObservableStore<Action, State> store = new Observable<>(initialState, reducer, middleware...);
 ```
 
 Get the current state.
@@ -30,9 +30,8 @@ store.addListener(new Listener<State>() {
 });
 ```
 
-Or with rxjava.
+Or with rxjava (you must explicitly declare it as a dependency).
 ```java
-ObservableStore<Action, State> store = ...;
 store.observable().subscribe(state -> { ... });
 ```
 
@@ -46,7 +45,7 @@ store.dispatch(new MyAction());
 I suggest you use the `StateLoader` as it will tie your state updates with the activity/fragment lifecycle and ensure callbacks happen on the main thread.
 ```java
 public class MyActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<State> {
-  ListenerStore<Action, State> store = ...;
+  ObservableStore<Action, State> store = ...;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +68,7 @@ public class MyActivity extends AppCompatActivity implements LoaderManager.Loade
 }
 ```
 
-## Composing Reducders
+## Composing Reducers
 
 It's common you'd want to switch on actions values or class type. `Reducers.matchValue()` and `Reducers.matchClass()` makes this easy.
 ```java
@@ -93,8 +92,10 @@ You can also run a sequence of reducers with `Reducers.all(reducer1, reducer2, .
 
 ## Thunk Middleware
 
+Allows you to dispatch async functions as actions.
+
 ```java
-ListenerStore<Action, State> store = new ListenerStore<>(initialState, reducer, new ThunkMiddleware<>());
+ObservableStore<Action, State> store = new ObservableStore<>(initialState, reducer, new ThunkMiddleware<>());
 
 store.dispatch(new Thunk<Action, State>() {
   @Override

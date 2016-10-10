@@ -1,22 +1,22 @@
 package me.tatarka.redux;
 
-import me.tatarka.redux.middleware.MiddlewareFactory;
-
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import me.tatarka.redux.middleware.MiddlewareFactory;
+import rx.Observable;
+
 /**
- * A simple store that lets you add and remove listeners to respond to state changes. While this
- * class is thread safe, listener callbacks happen on the thread dispatch was called on so you
- * must be able to handle that.
+ * A simple store that lets you observe state changes. While this class is thread safe, listener
+ * callbacks happen on the thread dispatch was called on so you must be able to handle that.
  */
-public class ListenerStore<A, S> extends AbstractStore<A, S> {
+public class ObservableStore<A, S> extends AbstractStore<A, S> {
 
     private volatile S state;
 
     private final CopyOnWriteArrayList<Listener<S>> listeners = new CopyOnWriteArrayList<>();
 
     @SafeVarargs
-    public ListenerStore(S initialState, Reducer<A, S> reducer, MiddlewareFactory<A, S>... middleware) {
+    public ObservableStore(S initialState, Reducer<A, S> reducer, MiddlewareFactory<A, S>... middleware) {
         super(initialState, reducer, middleware);
         state = initialState;
     }
@@ -51,6 +51,17 @@ public class ListenerStore<A, S> extends AbstractStore<A, S> {
     }
 
     public interface Listener<S> {
+        /**
+         * Called when a new state is set. This is called on the same thread as {@link
+         * #dispatch(Object)} or {@link #setState(Object)}.
+         */
         void onNewState(S state);
+    }
+
+    /**
+     * Provides an rxjava {@link rx.Observable} to listen to state changes.
+     */
+    public Observable<S> observable() {
+        return StoreObservable.observable(this);
     }
 }

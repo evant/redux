@@ -20,7 +20,7 @@ public class ThunkMiddlewareTest {
             }
         };
         TestMiddleware<Object, String> testMiddleware = new TestMiddleware<>();
-        ListenerStore<Object, String> store = ListenerStore.create("test1", Reducers.<Object, String>id(), new ThunkMiddleware<Object, String>(), testMiddleware);
+        ObservableStore<Object, String> store = new ObservableStore<>("test1", Reducers.<Object, String>id(), new ThunkMiddleware<Object, String>(), testMiddleware);
         store.dispatch(thunk);
 
         assertEquals("action1", testMiddleware.actions().get(0));
