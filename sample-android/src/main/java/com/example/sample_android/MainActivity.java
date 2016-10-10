@@ -298,6 +298,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         }
                     }
                 });
+                textView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        EditActionDialogFragment.newInstance(index).show(getSupportFragmentManager(), "dialog");
+                        return true;
+                    }
+                });
             }
 
             public void bind(int index, Object action) {

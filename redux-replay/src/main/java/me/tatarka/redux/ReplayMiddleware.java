@@ -36,16 +36,27 @@ public class ReplayMiddleware<S> implements Middleware<S> {
         return Collections.unmodifiableList(actions);
     }
 
+    public boolean isDisabled(int index) {
+        return disabled.contains(index);
+    }
+
     public void disable(int index) {
         disabled.add(index);
         rerunActions();
     }
 
-    public boolean isDisabled(int index) {
-        return disabled.contains(index);
-    }
-
     public void enable(int index) {
+        disabled.remove(index);
+        rerunActions();
+    }
+    
+    public void replace(int index, Object newAction) {
+        actions.set(index, newAction);
+        rerunActions();
+    }
+    
+    public void remove(int index) {
+        actions.remove(index);
         disabled.remove(index);
         rerunActions();
     }
