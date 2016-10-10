@@ -82,6 +82,11 @@ public class MyStateLoader extends StateLoader<State> {
 }
 ```
 
+Since the loader relays state changes to the main thread, you may lose important stack trace info.
+You can get it back by setting `StateLoader#debug(true)` or `StateLoader.debugAll(true)`. This 
+creates an expensive stacktrace on every dispatch so you probably don't want it on release. A common
+pattern would be to put `StateLoader.debugAll(BuildConfig.DEBUG)` in your setup code.
+
 ## Composing Reducers
 
 It's common you'd want to switch on actions values or class type. `Reducers.matchValue()` and `Reducers.matchClass()` makes this easy.
