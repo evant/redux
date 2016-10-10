@@ -45,7 +45,7 @@ store.dispatch(new MyAction());
 I suggest you use the `StateLoader` as it will tie your state updates with the activity/fragment lifecycle and ensure callbacks happen on the main thread.
 ```java
 public class MyActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<State> {
-  ObservableStore<State> store = ...;
+  ObservableStore<State> store = ...; // obtain this from somewhere, singleton maybe.
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +54,7 @@ public class MyActivity extends AppCompatActivity implements LoaderManager.Loade
   
   @Override
   public Loader<State> onCreateLoader(int id, Bundle args) {
-    return new StateLoader<>(this, store);
+    return StateLoader.create(this, store);
   }
   
   @Override
@@ -64,6 +64,20 @@ public class MyActivity extends AppCompatActivity implements LoaderManager.Loade
 
   @Override
   public void onLoaderReset(Loader<TodoList> loader) {
+  }
+}
+```
+
+You may also subclass `StateLoader` if you want the loader to manage the lifecycle of the store.
+```java
+public class MyStateLoader extends StateLoader<State> {
+  public TodoStateLoader(Context context) {
+    super(context);
+  }
+
+  @Override
+  protected ObservableStore<TodoList> onCreateStore() {
+    return new ObservableStore<>(...);
   }
 }
 ```
