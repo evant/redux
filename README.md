@@ -121,4 +121,4 @@ ObservableStore<Action, State> store = new ObservableStore<>(initialState, reduc
 store.dispatch(callThatReturnsObservable()
     .map(result -> new StopLoading())
     .startWith(Observable.just(new StartLoading())));
-``
+```
