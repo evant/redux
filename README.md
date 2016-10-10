@@ -110,3 +110,15 @@ store.dispatch(new Thunk<Action, State>() {
   }
 });
 ```
+
+## Observable Middleware
+
+Alternatively, you can use the `ObservableMiddleware` to dispatch a stream of actions.
+
+```java
+ObservableStore<Action, State> store = new ObservableStore<>(initialState, reducer, new ObservableMiddleware<>());
+
+store.dispatch(callThatReturnsObservable()
+    .map(result -> new StopLoading())
+    .startWith(Observable.just(new StartLoading())));
+``
