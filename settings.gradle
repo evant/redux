@@ -1,4 +1,4 @@
-include ':redux-android', ':sample-android'
+include ':redux-android', ':sample-android', ':redux-rx'
 rootProject.name = 'redux'
 include 'redux-core'
 include 'sample'
