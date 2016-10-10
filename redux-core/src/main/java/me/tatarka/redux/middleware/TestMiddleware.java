@@ -1,10 +1,10 @@
 package me.tatarka.redux.middleware;
 
-import me.tatarka.redux.Store;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import me.tatarka.redux.Store;
 
 /**
  * A middleware that records all actions and states, allowing you to easily check them in tests.
@@ -12,22 +12,23 @@ import java.util.List;
  * @param <A> the action type.
  * @param <S> the state type.
  */
-public class TestMiddleware<A, S> implements MiddlewareFactory<A, S> {
+public class TestMiddleware<A, S> implements Middleware<A, S> {
 
+    private Store<A, S> store;
     private List<A> actions = new ArrayList<>();
     private List<S> states = new ArrayList<>();
 
     @Override
-    public Middleware<A> create(final Store<A, S> store) {
+    public void create(final Store<A, S> store) {
+        this.store = store;
         states.add(store.state());
-        return new Middleware<A>() {
-            @Override
-            public void dispatch(Next<A> next, A action) {
-                TestMiddleware.this.actions.add(action);
-                next.next(action);
-                TestMiddleware.this.states.add(store.state());
-            }
-        };
+    }
+
+    @Override
+    public void dispatch(Next<A> next, A action) {
+        actions.add(action);
+        next.next(action);
+        states.add(store.state());
     }
 
     /**
@@ -38,7 +39,8 @@ public class TestMiddleware<A, S> implements MiddlewareFactory<A, S> {
     }
 
     /**
-     * Returns all states. The first state is before any action has been dispatched. Each subsequent
+     * Returns all states. The first state is before any action has been dispatched. Each
+     * subsequent
      * state is the state after each action.
      */
     public List<S> states() {

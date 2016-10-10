@@ -1,7 +1,6 @@
 package me.tatarka.redux;
 
 import me.tatarka.redux.middleware.Middleware;
-import me.tatarka.redux.middleware.MiddlewareFactory;
 
 /**
  * Allows you to easily implement a store that runs a {@link Reducer} and {@link Middleware}. You
@@ -10,12 +9,12 @@ import me.tatarka.redux.middleware.MiddlewareFactory;
  */
 public abstract class AbstractStore<A, S> implements Store<A, S> {
 
-    private final Middleware<A>[] middleware;
+    private final Middleware<A, S>[] middleware;
     private final Middleware.Next<A>[] next;
-    private Middleware<A> end;
+    private Middleware<A, S> end;
 
     @SafeVarargs
-    public AbstractStore(S initialState, final Reducer<A, S> reducer, MiddlewareFactory<A, S>... middleware) {
+    public AbstractStore(S initialState, final Reducer<A, S> reducer, Middleware<A, S>... middleware) {
         if (reducer == null) {
             throw new NullPointerException("reducer == null");
         }
@@ -25,8 +24,9 @@ public abstract class AbstractStore<A, S> implements Store<A, S> {
             ProxyStore proxyStore = new ProxyStore(initialState);
             for (int i = 0; i < middleware.length; i++) {
                 final int index = i;
-                MiddlewareFactory<A, S> m = middleware[index];
-                this.middleware[index] = m.create(proxyStore);
+                Middleware<A, S> m = middleware[index];
+                m.create(proxyStore);
+                this.middleware[index] = m;
                 this.next[index] = new Middleware.Next<A>() {
                     @Override
                     public void next(A action) {
@@ -36,7 +36,12 @@ public abstract class AbstractStore<A, S> implements Store<A, S> {
             }
             proxyStore.inConstructor = false;
         }
-        end = new Middleware<A>() {
+        end = new Middleware<A, S>() {
+            @Override
+            public void create(Store<A, S> store) {
+
+            }
+
             @Override
             public void dispatch(Next<A> next, A action) {
                 setState(reducer.reduce(action, state()));

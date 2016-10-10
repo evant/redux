@@ -1,22 +1,23 @@
 package me.tatarka.redux;
 
 import me.tatarka.redux.middleware.Middleware;
-import me.tatarka.redux.middleware.MiddlewareFactory;
 
-public class ThunkMiddleware<A, S> implements MiddlewareFactory<A, S> {
+public class ThunkMiddleware<A, S> implements Middleware<A, S> {
+
+    private Store<A, S> store;
 
     @Override
-    public Middleware<A> create(final Store<A, S> store) {
-        return new Middleware<A>() {
-            @Override
-            public void dispatch(Next<A> next, A action) {
-                if (action instanceof Thunk) {
-                    Thunk<A, S> thunk = (Thunk<A, S>) action;
-                    thunk.run(store);
-                } else {
-                    next.next(action);
-                }
-            }
-        };
+    public void create(final Store<A, S> store) {
+        this.store = store;
+    }
+
+    @Override
+    public void dispatch(Next<A> next, A action) {
+        if (action instanceof Thunk) {
+            Thunk<A, S> thunk = (Thunk<A, S>) action;
+            thunk.run(store);
+        } else {
+            next.next(action);
+        }
     }
 }

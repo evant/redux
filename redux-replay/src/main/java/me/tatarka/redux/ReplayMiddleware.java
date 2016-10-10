@@ -1,11 +1,14 @@
 package me.tatarka.redux;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import me.tatarka.redux.middleware.Middleware;
-import me.tatarka.redux.middleware.MiddlewareFactory;
 
-import java.util.*;
-
-public class ReplayMiddleware<A, S> implements MiddlewareFactory<A, S> {
+public class ReplayMiddleware<A, S> implements Middleware<A, S> {
 
     private S initialState;
     private Store<A, S> store;
@@ -14,20 +17,19 @@ public class ReplayMiddleware<A, S> implements MiddlewareFactory<A, S> {
     private boolean runningActions;
 
     @Override
-    public Middleware<A> create(Store<A, S> store) {
+    public void create(Store<A, S> store) {
         this.initialState = store.state();
         this.store = store;
         actions.clear();
         disabled.clear();
-        return new Middleware<A>() {
-            @Override
-            public void dispatch(Next<A> next, A action) {
-                if (!runningActions) {
-                    actions.add(action);
-                }
-                next.next(action);
-            }
-        };
+    }
+
+    @Override
+    public void dispatch(Next<A> next, A action) {
+        if (!runningActions) {
+            actions.add(action);
+        }
+        next.next(action);
     }
 
     public List<A> actions() {
@@ -38,11 +40,11 @@ public class ReplayMiddleware<A, S> implements MiddlewareFactory<A, S> {
         disabled.add(index);
         rerunActions();
     }
-    
+
     public boolean isDisabled(int index) {
         return disabled.contains(index);
     }
-    
+
     public void enable(int index) {
         disabled.remove(index);
         rerunActions();

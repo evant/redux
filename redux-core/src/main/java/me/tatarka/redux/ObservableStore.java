@@ -2,7 +2,7 @@ package me.tatarka.redux;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import me.tatarka.redux.middleware.MiddlewareFactory;
+import me.tatarka.redux.middleware.Middleware;
 import rx.Observable;
 
 /**
@@ -16,7 +16,7 @@ public class ObservableStore<A, S> extends AbstractStore<A, S> {
     private final CopyOnWriteArrayList<Listener<S>> listeners = new CopyOnWriteArrayList<>();
 
     @SafeVarargs
-    public ObservableStore(S initialState, Reducer<A, S> reducer, MiddlewareFactory<A, S>... middleware) {
+    public ObservableStore(S initialState, Reducer<A, S> reducer, Middleware<A, S>... middleware) {
         super(initialState, reducer, middleware);
         state = initialState;
     }
