@@ -1,8 +1,6 @@
 package me.tatarka.redux.sample;
 
-import me.tatarka.redux.ObservableStore;
-import me.tatarka.redux.Reducer;
-import me.tatarka.redux.Reducers;
+import me.tatarka.redux.*;
 
 public class CounterSample {
 
@@ -11,20 +9,22 @@ public class CounterSample {
     static final Reducer<Increment, Integer> increment = (action, state) -> state + 1;
     static final Reducer<Add, Integer> add = (action, state) -> state + action.value;
 
-    static final Reducer<Object, Integer> counter = Reducers.<Object, Integer>matchClass()
+    static final Reducer<Action, Integer> counter = Reducers.<Action, Integer>matchClass()
             .when(Increment.class, increment)
             .when(Add.class, add);
 
     // actions
 
-    static class Increment {
+    interface Action {}
+
+    static class Increment implements Action {
         @Override
         public String toString() {
             return "Increment";
         }
     }
 
-    static class Add {
+    static class Add implements Action {
         final int value;
 
         Add(int value) {
@@ -38,9 +38,11 @@ public class CounterSample {
     }
 
     public static void main(String[] args) {
-        ObservableStore<Integer> store = new ObservableStore<>(0, counter, new LogMiddleware<>());
-        store.observable().subscribe(count -> System.out.println("state: " + count));
-        store.dispatch(new Increment());
-        store.dispatch(new Add(2));
+        SimpleStore<Integer> store = new SimpleStore<>(0);
+        Dispatcher<Action, Action> dispatcher = Dispatcher.forStore(store, counter)
+                .chain(new LogMiddleware<>(store));
+        ObserveStore.observable(store).subscribe(count -> System.out.println("state: " + count));
+        dispatcher.dispatch(new Increment());
+        dispatcher.dispatch(new Add(2));
     }
 }

@@ -8,11 +8,11 @@ import rx.functions.Cancellable;
 import rx.observers.SerializedObserver;
 
 /**
- * Handles constructing an observable from an {@link ObservableStore}.
+ * Handles constructing an observable from an {@link SimpleStore}.
  */
-class StoreObservable {
+public class ObserveStore {
 
-    static <S> Observable<S> observable(final ObservableStore<S> store) {
+    public static <S> Observable<S> observable(final SimpleStore<S> store) {
         return Observable.fromEmitter(new Action1<Emitter<S>>() {
             @Override
             public void call(Emitter<S> emitter) {
@@ -21,12 +21,11 @@ class StoreObservable {
         }, Emitter.BackpressureMode.LATEST);
     }
 
-    private static class EmitterListener<S> implements ObservableStore.Listener<S>, Cancellable {
-
-        final ObservableStore<S> store;
+    private static class EmitterListener<S> implements SimpleStore.Listener<S>, Cancellable {
+        final SimpleStore<S> store;
         final Observer<S> observer;
 
-        EmitterListener(Emitter<S> emitter, ObservableStore<S> store) {
+        EmitterListener(Emitter<S> emitter, SimpleStore<S> store) {
             this.observer = new SerializedObserver<>(emitter);
             this.store = store;
             emitter.setCancellation(this);

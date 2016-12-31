@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.example.sample_android.action.Action;
 import com.example.sample_android.state.TodoList;
 
 import java.lang.reflect.Field;
@@ -37,7 +38,7 @@ public class EditActionDialogFragment extends DialogFragment {
         return fragment;
     }
 
-    ReplayMiddleware<TodoList> middleware;
+    ReplayMiddleware<TodoList, Action, Action> middleware;
     int index;
 
     @Override
@@ -50,7 +51,7 @@ public class EditActionDialogFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final Object action = middleware.actions().get(index);
+        final Action action = middleware.actions().get(index);
         final LinearLayout layout = new LinearLayout(getContext());
         int padding = getResources().getDimensionPixelOffset(R.dimen.padding);
         layout.setPadding(padding, padding, padding, padding);
@@ -67,7 +68,7 @@ public class EditActionDialogFragment extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         try {
-                            Object newAction = unsafe.newInstance(action.getClass());
+                            Action newAction = unsafe.newInstance(action.getClass());
                             for (int i = 0; i < layout.getChildCount(); i++) {
                                 TextInputLayout input = (TextInputLayout) layout.getChildAt(i);
                                 EditText editText = input.getEditText();

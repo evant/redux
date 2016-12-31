@@ -5,20 +5,20 @@ import java.util.Objects;
 import me.tatarka.redux.Store;
 import me.tatarka.redux.middleware.Middleware;
 
-public class LogMiddleware<S> implements Middleware<S> {
+public class LogMiddleware<S, A, R> implements Middleware<A, R> {
 
-    private Store<S> store;
+    private final Store<S> store;
 
-    @Override
-    public void create(Store<S> store) {
+    public LogMiddleware(Store<S> store) {
         this.store = store;
     }
 
     @Override
-    public void dispatch(Next next, Object action) {
+    public R dispatch(Next<A, R> next, A action) {
         String before = Objects.toString(store.state());
-        next.next(action);
+        R result = next.next(action);
         String after = Objects.toString(store.state());
         System.out.println(before + " -> " + action + " -> " + after);
+        return result;
     }
 }

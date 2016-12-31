@@ -8,31 +8,30 @@ import java.util.Set;
 
 import me.tatarka.redux.middleware.Middleware;
 
-public class ReplayMiddleware<S> implements Middleware<S> {
+public class ReplayMiddleware<S, A, R> implements Middleware<A, R> {
 
-    private S initialState;
-    private Store<S> store;
-    private final ArrayList<Object> actions = new ArrayList<>();
-    private Set<Integer> disabled = new HashSet<>();
+    private final S initialState;
+    private final Store<S> store;
+    private final Dispatcher<A, A> dispatcher;
+    private final ArrayList<A> actions = new ArrayList<>();
+    private final Set<Integer> disabled = new HashSet<>();
     private boolean runningActions;
 
-    @Override
-    public void create(Store<S> store) {
+    public ReplayMiddleware(Store<S> store, Reducer<A, S> reducer) {
         this.initialState = store.state();
         this.store = store;
-        actions.clear();
-        disabled.clear();
+        this.dispatcher = Dispatcher.forStore(store, reducer);
     }
 
     @Override
-    public void dispatch(Next next, Object action) {
+    public R dispatch(Next<A, R> next, A action) {
         if (!runningActions) {
             actions.add(action);
         }
-        next.next(action);
+        return next.next(action);
     }
 
-    public List<Object> actions() {
+    public List<A> actions() {
         return Collections.unmodifiableList(actions);
     }
 
@@ -49,12 +48,12 @@ public class ReplayMiddleware<S> implements Middleware<S> {
         disabled.remove(index);
         rerunActions();
     }
-    
-    public void replace(int index, Object newAction) {
+
+    public void replace(int index, A newAction) {
         actions.set(index, newAction);
         rerunActions();
     }
-    
+
     public void remove(int index) {
         actions.remove(index);
         disabled.remove(index);
@@ -66,8 +65,8 @@ public class ReplayMiddleware<S> implements Middleware<S> {
         runningActions = true;
         for (int i = 0; i < actions.size(); i++) {
             if (!disabled.contains(i)) {
-                Object action = actions.get(i);
-                store.dispatch(action);
+                A action = actions.get(i);
+                dispatcher.dispatch(action);
             }
         }
         runningActions = false;

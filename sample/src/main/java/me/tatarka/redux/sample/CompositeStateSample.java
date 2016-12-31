@@ -1,8 +1,6 @@
 package me.tatarka.redux.sample;
 
-import me.tatarka.redux.ObservableStore;
-import me.tatarka.redux.Reducer;
-import me.tatarka.redux.Reducers;
+import me.tatarka.redux.*;
 
 public class CompositeStateSample {
 
@@ -31,17 +29,19 @@ public class CompositeStateSample {
 
     static Reducer<Increment, Integer> increment = (action, state) -> state + 1;
 
-    static Reducer<Object, Person> updatePerson = Reducers.<Object, Person>matchClass()
+    static Reducer<Action, Person> updatePerson = Reducers.<Action, Person>matchClass()
             .when(ChangeName.class, (action, state) -> new Person(CompositeStateSample.<String>replace().reduce(action, state.name), state.age))
             .when(IncrementAge.class, (action, state) -> new Person(state.name, increment.reduce(action, state.age)));
 
     // actions
 
-    interface Replace<T> {
+    interface Action {}
+
+    interface Replace<T> extends Action {
         T newValue();
     }
 
-    interface Increment {
+    interface Increment extends Action {
     }
 
     static class ChangeName implements Replace<String> {
@@ -71,9 +71,11 @@ public class CompositeStateSample {
     }
 
     public static void main(String[] args) {
-        ObservableStore<Person> store = new ObservableStore<>(new Person("nobody", 0), updatePerson, new LogMiddleware<>());
-        store.observable().subscribe(person -> System.out.println("state: " + person));
-        store.dispatch(new ChangeName("Bob"));
-        store.dispatch(new IncrementAge());
+        SimpleStore<Person> store = new SimpleStore<>(new Person("nobody", 0));
+        Dispatcher<Action, Action> dispatcher = Dispatcher.forStore(store, updatePerson)
+                .chain(new LogMiddleware<>(store));
+        ObserveStore.observable(store).subscribe(person -> System.out.println("state: " + person));
+        dispatcher.dispatch(new ChangeName("Bob"));
+        dispatcher.dispatch(new IncrementAge());
     }
 }

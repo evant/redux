@@ -3,7 +3,7 @@ package me.tatarka.redux;
 import android.util.Log;
 import me.tatarka.redux.middleware.Middleware;
 
-public class LogMiddleware<S> implements Middleware<S> {
+public class LogMiddleware<A, R> implements Middleware<A, R> {
 
     private final String tag;
     private final int priority;
@@ -18,13 +18,8 @@ public class LogMiddleware<S> implements Middleware<S> {
     }
 
     @Override
-    public void create(Store<S> store) {
-        
-    }
-
-    @Override
-    public void dispatch(Next next, Object action) {
+    public R dispatch(Next<A, R> next, A action) {
         Log.println(priority, tag, action.toString());
-        next.next(action);
+        return next.next(action);
     }
 }

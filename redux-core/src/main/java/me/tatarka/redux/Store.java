@@ -18,10 +18,4 @@ public interface Store<S> {
      * tests.
      */
     void setState(S state);
-
-    /**
-     * Dispatch an action to update the store by running the reducer and middleware. The action
-     * must not be null.
-     */
-    void dispatch(Object action);
 }

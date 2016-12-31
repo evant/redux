@@ -6,6 +6,8 @@ import com.example.sample_android.state.TodoList;
 
 import java.util.List;
 
+import com.example.sample_android.store.MainStore;
+import me.tatarka.redux.Dispatcher;
 import me.tatarka.redux.Store;
 import me.tatarka.redux.Thunk;
 
@@ -17,14 +19,14 @@ public class LoadActionCreator {
         this.datastore = datastore;
     }
 
-    public Thunk<TodoList> load() {
-        return new Thunk<TodoList>() {
+    public Thunk<Action, Action> load() {
+        return new Thunk<Action, Action>() {
             @Override
-            public void run(final Store<TodoList> store) {
+            public void run(final Dispatcher<Action, Action> dispatcher) {
                 datastore.get(new Datastore.Callback() {
                     @Override
                     public void onList(List<TodoItem> items) {
-                        store.dispatch(Load.create(items));
+                        dispatcher.dispatch(Load.create(items));
                     }
                 });
             }

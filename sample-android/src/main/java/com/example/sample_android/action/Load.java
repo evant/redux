@@ -6,7 +6,7 @@ import com.google.auto.value.AutoValue;
 import java.util.List;
 
 @AutoValue
-public abstract class Load {
+public abstract class Load implements Action {
 
     public static Load create(List<TodoItem> items) {
         return new AutoValue_Load(items);

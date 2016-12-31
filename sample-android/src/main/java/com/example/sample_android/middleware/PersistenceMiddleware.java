@@ -6,23 +6,20 @@ import com.example.sample_android.state.TodoList;
 import me.tatarka.redux.Store;
 import me.tatarka.redux.middleware.Middleware;
 
-public class PersistenceMiddleware implements Middleware<TodoList> {
+public class PersistenceMiddleware<A, R> implements Middleware<A, R> {
 
+    private final Store<TodoList> store;
     private final Datastore datastore;
-    private Store<TodoList> store;
 
-    public PersistenceMiddleware(Datastore datastore) {
+    public PersistenceMiddleware(Store<TodoList> store, Datastore datastore) {
+        this.store = store;
         this.datastore = datastore;
     }
 
     @Override
-    public void create(final Store<TodoList> store) {
-        this.store = store;
-    }
-
-    @Override
-    public void dispatch(Next next, Object action) {
-        next.next(action);
+    public R dispatch(Next<A, R> next, A action) {
+        R result = next.next(action);
         datastore.store(store.state().items());
+        return result;
     }
 }

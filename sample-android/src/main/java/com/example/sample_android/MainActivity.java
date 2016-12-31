@@ -26,6 +26,7 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.sample_android.action.Action;
 import com.example.sample_android.action.Check;
 import com.example.sample_android.action.LoadActionCreator;
 import com.example.sample_android.action.Remove;
@@ -35,13 +36,14 @@ import com.example.sample_android.state.TodoList;
 import java.util.Collections;
 import java.util.List;
 
+import com.example.sample_android.store.MainStore;
 import me.tatarka.redux.ReplayMiddleware;
 import me.tatarka.redux.Store;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<TodoList> {
     
-    Store<TodoList> store;
-    ReplayMiddleware<TodoList> replayMiddleware;
+    MainStore store;
+    ReplayMiddleware<TodoList, Action, Action> replayMiddleware;
     Adapter adapter = new Adapter();
     ActionListAdapter actionListAdapter = new ActionListAdapter();
     ProgressBar loading;
@@ -210,14 +212,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         class Holder extends RecyclerView.ViewHolder {
-            final Store<TodoList> store;
+            final MainStore store;
             final CheckBox checkBox;
             final ImageButton edit;
             final ImageButton delete;
 
             TodoItem item;
 
-            public Holder(final Store<TodoList> store, View itemView) {
+            public Holder(final MainStore store, View itemView) {
                 super(itemView);
                 checkBox = (CheckBox) itemView.findViewById(R.id.item);
                 edit = (ImageButton) itemView.findViewById(R.id.edit);
@@ -258,9 +260,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     class ActionListAdapter extends RecyclerView.Adapter<ActionListAdapter.Holder> {
 
-        List<Object> actions = Collections.emptyList();
+        List<Action> actions = Collections.emptyList();
 
-        public void setState(List<Object> actions) {
+        public void setState(List<Action> actions) {
             this.actions = actions;
             notifyDataSetChanged();
         }

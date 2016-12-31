@@ -5,14 +5,14 @@ I've seen a few of these floating around, but this one has some specific benefit
 * Any object can be used as an action or state.
 * Built-in functions to help compose reducers
 * Middleware that's actually implemented like you'd expect.
-* A port of the thunk middleware.
-* A fully-fleshed android sample.
+* Thunk and rxjava dispatchers.
+* A fully-fleshed-out android sample.
 
 ## Usage
 
 Create a store.
 ```java
-ObservableStore<State> store = new Observable<>(initialState, reducer, middleware...);
+SimpleStore<State> store = new SimpleStore(initialState);
 ```
 
 Get the current state.
@@ -30,14 +30,20 @@ store.addListener(new Listener<State>() {
 });
 ```
 
-Or with rxjava (you must explicitly declare it as a dependency).
+Or with rxjava (using redux-rx).
 ```java
-store.observable().subscribe(state -> { ... });
+ObserveStore.observable(store).subscribe(state -> { ... });
+```
+
+Create a dispatcher with optional middleware.
+```java
+Dispatcher<Action, Action> dispatcher = Dispatcher.forStore(store, reducer)
+    .chain(middleware...);
 ```
 
 Dispatch actions.
 ```java
-store.dispatch(new MyAction());
+dispatcher.dispatch(new MyAction());
 ```
 
 ## Android
@@ -45,7 +51,7 @@ store.dispatch(new MyAction());
 I suggest you use the `StateLoader` as it will tie your state updates with the activity/fragment lifecycle and ensure callbacks happen on the main thread.
 ```java
 public class MyActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<State> {
-  ObservableStore<State> store = ...; // obtain this from somewhere, singleton maybe.
+  SimpleStore<State> store = ...; // obtain this from somewhere, singleton maybe.
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -70,14 +76,14 @@ public class MyActivity extends AppCompatActivity implements LoaderManager.Loade
 
 You may also subclass `StateLoader` if you want the loader to manage the lifecycle of the store.
 ```java
-public class MyStateLoader extends StateLoader<State> {
+public class MyStateLoader extends StateLoader<MyStore, State> {
   public TodoStateLoader(Context context) {
     super(context);
   }
 
   @Override
-  protected ObservableStore<TodoList> onCreateStore() {
-    return new ObservableStore<>(...);
+  protected MyStore onCreateStore() {
+    return new MyStore(..);
   }
 }
 ```
@@ -109,35 +115,71 @@ Reducer<Object, State> reducer = Reducers.match()
 
 You can also run a sequence of reducers with `Reducers.all(reducer1, reducer2, ...)` or run reducers until one changes the state with `Reducers.first(reducer1, reducer2, ...)`.
 
-## Thunk Middleware
+## Thunk Dispatcher
 
 Allows you to dispatch async functions as actions.
 
 ```java
-ObservableStore<State> store = new ObservableStore<>(initialState, reducer, new ThunkMiddleware<State>());
+SimpleStore<State> store = new SimpleStore<>(initialState);
+ThunkDispatcher<Action, Action> dispatcher = new ThunkDispatcher<>(Dispatcher.forStore(store, reducer));
 
-store.dispatch(new Thunk<State>() {
+dispatcher.dispatch(new Thunk<Action, Action>() {
   @Override
-  public void run(Store<State> store) {
-    store.dispatch(new StartLoading());
+  public void run(Dispatcher<Action, Action> dispatcher) {
+    dispatcher.dispatch(new StartLoading());
     someAsyncCall(new Runnable() {
       @Override
       public void run() {
-        store.dispatch(new StopLoading());
+        dispatcher.dispatch(new StopLoading());
       }
     }
   }
 });
 ```
 
-## Observable Middleware
+## Observable Dispatcher
 
-Alternatively, you can use the `ObservableMiddleware` to dispatch a stream of actions.
+Alternatively, you can use the `ObservableDispatcher` to dispatch a stream of actions.
 
 ```java
-ObservableStore<State> store = new ObservableStore<>(initialState, reducer, new ObservableMiddleware<State>());
+SimpleStore<State> store = new SimpleStore<>(initialState);
+ObservableDispatcher<Action> dispatcher = new ObservableDispatcher<>(Dispatcher.forStore(store, reducer));
 
-store.dispatch(callThatReturnsObservable()
+dispatcher.dispatch(callThatReturnsObservable()
     .map(result -> new StopLoading())
     .startWith(Observable.just(new StartLoading())));
 ```
+
+## Subclassing a Store
+
+Don't want to have to worry about passing around the store and dispatchers? You can subclass `SimpleStore` and create
+your own dispatch methods. This also simplifies generics a bit when using throughout your app.
+
+```java
+public class MyStore extends SimpleStore<State> {
+
+  private final Dispatcher<Action, Action> dispatcher;
+  private final ObservableDispatcher<Action> observableDispatcher;
+
+  public MyStore() {
+    super(new State());
+    dispatcher = Dispatcher.forStore(this, new MyReducer())
+      .chain(new LogMiddleware<>("ACTION"));
+    observableDispatcher = new ObservableDispatcher<>(dispatcher);
+  }
+
+  public Action dispatch(Action action) {
+    return dispatcher.dispatch(action);
+  }
+
+  public Subscription dispatch(Observable<Action> actions) {
+    return observableDispatcher.dispatch(actions);
+  }
+
+  public Observable<Action> observable() {
+    return ObserveStore.observable(this);
+  }
+}
+```
+
+Now you can just pass the single store around and call `store.dispatch()`.

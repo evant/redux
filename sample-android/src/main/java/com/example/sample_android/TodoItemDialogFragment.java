@@ -18,6 +18,7 @@ import com.example.sample_android.action.Edit;
 import com.example.sample_android.state.TodoItem;
 import com.example.sample_android.state.TodoList;
 
+import com.example.sample_android.store.MainStore;
 import me.tatarka.redux.StateLoader;
 import me.tatarka.redux.Store;
 
@@ -35,7 +36,7 @@ public class TodoItemDialogFragment extends DialogFragment {
         return fragment;
     }
 
-    Store<TodoList> store;
+    MainStore store;
     int id;
 
     @Override

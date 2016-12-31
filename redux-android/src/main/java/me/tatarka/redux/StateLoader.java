@@ -8,7 +8,7 @@ import android.support.annotation.MainThread;
 import android.support.v4.content.Loader;
 import android.util.Pair;
 
-public abstract class StateLoader<S> extends Loader<S> {
+public abstract class StateLoader<S, SR extends SimpleStore<S>> extends Loader<S> {
 
     private static boolean debugAll = true;
 
@@ -25,16 +25,16 @@ public abstract class StateLoader<S> extends Loader<S> {
     /**
      * Constructs a new {@code StateLoader} with the given {@link Store}.
      */
-    public static <S> StateLoader<S> create(Context context, final ObservableStore<S> store) {
-        return new StateLoader<S>(context) {
+    public static <S, SR extends SimpleStore<S>> StateLoader<S, SR> create(Context context, final SR store) {
+        return new StateLoader<S, SR>(context) {
             @Override
-            protected ObservableStore<S> onCreateStore() {
+            protected SR onCreateStore() {
                 return store;
             }
         };
     }
 
-    private ObservableStore<S> store;
+    private SR store;
     private final ResultHandler handler = new ResultHandler();
     private boolean debug = debugAll;
 
@@ -52,13 +52,13 @@ public abstract class StateLoader<S> extends Loader<S> {
     /**
      * Subclasses should override this method to provide the store.
      */
-    protected abstract ObservableStore<S> onCreateStore();
+    protected abstract SR onCreateStore();
 
     /**
      * Returns the store for this loader. This will lazily call {@link #onCreateStore()}.
      */
     @MainThread
-    public final Store<S> store() {
+    public final SR store() {
         if (store == null) {
             store = onCreateStore();
         }
@@ -67,20 +67,18 @@ public abstract class StateLoader<S> extends Loader<S> {
 
     @Override
     protected void onStartLoading() {
-        // ensure store is set.
-        store();
-        store.addListener(handler);
+        store().addListener(handler);
     }
 
     @Override
     protected void onStopLoading() {
-        store.removeListener(handler);
+        store().removeListener(handler);
     }
 
     /**
      * Listens to state changes and posts them to the main thread.
      */
-    class ResultHandler extends Handler implements ObservableStore.Listener<S> {
+    class ResultHandler extends Handler implements SimpleStore.Listener<S> {
 
         ResultHandler() {
             super(Looper.getMainLooper());

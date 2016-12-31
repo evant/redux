@@ -12,32 +12,36 @@ public class TestMiddlewareTest {
 
     @Test
     public void states_includes_initial_state() {
-        TestMiddleware<String> testMiddleware = new TestMiddleware<>();
-        new ObservableStore<>("test", Reducers.<Object, String>id(), testMiddleware);
+        SimpleStore<String> simpleStore = new SimpleStore<>("test");
+        TestMiddleware<String, String, String> testMiddleware = new TestMiddleware<>(simpleStore);
 
         assertEquals("test", testMiddleware.states().get(0));
     }
 
     @Test
     public void state_includes_state_after_action() {
-        Reducer<Object, String> reducer = new Reducer<Object, String>() {
+        Reducer<String, String> reducer = new Reducer<String, String>() {
             @Override
-            public String reduce(Object action, String state) {
+            public String reduce(String action, String state) {
                 return "test2";
             }
         };
-        TestMiddleware<String> testMiddleware = new TestMiddleware<>();
-        ObservableStore<String> store = new ObservableStore<>("test1", reducer, testMiddleware);
-        store.dispatch("action");
+        SimpleStore<String> simpleStore = new SimpleStore<>("test");
+        TestMiddleware<String, String, String> testMiddleware = new TestMiddleware<>(simpleStore);
+        Dispatcher<String, String> dispatcher = Dispatcher.forStore(simpleStore, reducer)
+                .chain(testMiddleware);
+        dispatcher.dispatch("action");
 
         assertEquals("test2", testMiddleware.states().get(1));
     }
 
     @Test
     public void action_after_dispatch() {
-        TestMiddleware<String> testMiddleware = new TestMiddleware<>();
-        ObservableStore<String> store = new ObservableStore<>("test", Reducers.<Object, String>id(), testMiddleware);
-        store.dispatch("action");
+        SimpleStore<String> simpleStore = new SimpleStore<>("test");
+        TestMiddleware<String, String, String> testMiddleware = new TestMiddleware<>(simpleStore);
+        Dispatcher<String, String> dispatcher = Dispatcher.forStore(simpleStore, Reducers.<String, String>id())
+                .chain(testMiddleware);
+        dispatcher.dispatch("action");
 
         assertEquals("action", testMiddleware.actions().get(0));
     }
