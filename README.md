@@ -8,6 +8,26 @@ I've seen a few of these floating around, but this one has some specific benefit
 * Thunk and rxjava dispatchers.
 * A fully-fleshed-out android sample.
 
+## Download
+
+```groovy
+buildscript {
+  repositories {
+    maven {
+      url "https://oss.sonatype.org/content/repositories/snapshots"
+    }
+  }
+}
+
+dependencies {
+  compile 'me.tatarka.redux:redux-core:1.0-SNAPSHOT'
+  compile 'me.tatarka.redux:redux-android:1.0-SNAPSHOT'
+  compile 'me.tatarka.redux:redux-thunk:1.0-SNAPSHOT'
+  compile 'me.tatarka.redux:redux-rx:1.0-SNAPSHOT'
+  compile 'me.tatarka.redux:redux-replay:1.0-SNAPSHOT'
+}
+```
+
 ## Usage
 
 Create a store.

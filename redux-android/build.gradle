@@ -8,6 +8,7 @@ buildscript {
 }
 
 apply plugin: 'com.android.library'
+apply from: '../publish.gradle'
 
 android {
     compileSdkVersion 24
@@ -31,3 +32,4 @@ dependencies {
     androidTestCompile 'io.reactivex:rxjava:1.2.1'
     androidTestCompile 'org.assertj:assertj-core:2.5.0'
 }
+

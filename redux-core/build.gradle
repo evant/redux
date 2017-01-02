@@ -1,22 +1,9 @@
-buildscript {
-    repositories {
-        maven { url 'http://repo.spring.io/plugins-release' }
-    }
-    dependencies {
-        classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.7'
-    }
-}
-
 apply plugin: 'java'
-apply plugin: 'propdeps'
-apply plugin: 'propdeps-maven'
-apply plugin: 'propdeps-idea'
+apply from: '../publish.gradle'
 
 sourceCompatibility = 1.7
 
 dependencies {
-    optional 'io.reactivex:rxjava:1.2.1'
-
     testCompile 'io.reactivex:rxjava:1.2.1'
     testCompile 'junit:junit:4.12'
 }
