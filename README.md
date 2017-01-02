@@ -11,11 +11,9 @@ I've seen a few of these floating around, but this one has some specific benefit
 ## Download
 
 ```groovy
-buildscript {
-  repositories {
-    maven {
-      url "https://oss.sonatype.org/content/repositories/snapshots"
-    }
+repositories {
+  maven {
+    url "https://oss.sonatype.org/content/repositories/snapshots"
   }
 }
 
