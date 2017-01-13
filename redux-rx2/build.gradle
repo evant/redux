@@ -1,0 +1,10 @@
+apply plugin: 'java'
+apply from: '../publish.gradle'
+
+sourceCompatibility = 1.7
+
+dependencies {
+    compile project(':redux-core')
+    compile 'io.reactivex.rxjava2:rxjava:2.0.4'
+    testCompile 'junit:junit:4.12'
+}
