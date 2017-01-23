@@ -22,6 +22,7 @@ dependencies {
   compile 'me.tatarka.redux:redux-android:1.0-SNAPSHOT'
   compile 'me.tatarka.redux:redux-thunk:1.0-SNAPSHOT'
   compile 'me.tatarka.redux:redux-rx:1.0-SNAPSHOT'
+  compile 'me.tatarka.redux:redux-rx2:1.0-SNAPSHOT'
   compile 'me.tatarka.redux:redux-replay:1.0-SNAPSHOT'
 }
 ```
@@ -53,6 +54,11 @@ Or with rxjava (using redux-rx).
 ObserveStore.observable(store).subscribe(state -> { ... });
 ```
 
+Or with rxjava2 (using redux-rx2).
+```java
+ObserveStore.flowable(store).subscribe(state -> { ... });
+```
+
 Create a dispatcher with optional middleware.
 ```java
 Dispatcher<Action, Action> dispatcher = Dispatcher.forStore(store, reducer)
@@ -75,12 +81,12 @@ public class MyActivity extends AppCompatActivity implements LoaderManager.Loade
   protected void onCreate(Bundle savedInstanceState) {
     getSupportLoaderManager().initLoader(0, null, this);
   }
-  
+
   @Override
   public Loader<State> onCreateLoader(int id, Bundle args) {
     return StateLoader.create(this, store);
   }
-  
+
   @Override
   public void onLoadFinished(Loader<State> loader, State data) {
     ...;
@@ -107,7 +113,7 @@ public class MyStateLoader extends StateLoader<MyStore, State> {
 ```
 
 Since the loader relays state changes to the main thread, you may lose important stack trace info.
-You can get it back by setting `StateLoader#debug(true)` or `StateLoader.debugAll(true)`. This 
+You can get it back by setting `StateLoader#debug(true)` or `StateLoader.debugAll(true)`. This
 creates an expensive stacktrace on every dispatch so you probably don't want it on release. A common
 pattern would be to put `StateLoader.debugAll(BuildConfig.DEBUG)` in your setup code.
 
