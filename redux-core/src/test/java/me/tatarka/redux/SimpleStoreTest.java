@@ -4,14 +4,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import rx.observers.TestSubscriber;
-
 import static org.junit.Assert.assertEquals;
 
 @RunWith(JUnit4.class)

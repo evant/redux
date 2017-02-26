@@ -1,10 +1,12 @@
-package me.tatarka.redux;
+package me.tatarka.redux.rx2;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableEmitter;
 import io.reactivex.FlowableOnSubscribe;
 import io.reactivex.functions.Cancellable;
+
+import me.tatarka.redux.SimpleStore;
 
 /**
  * Handles constructing a flowable from an {@link SimpleStore}.

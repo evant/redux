@@ -1,8 +1,10 @@
-package me.tatarka.redux;
+package me.tatarka.redux.rx2;
 
 import io.reactivex.Flowable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
+
+import me.tatarka.redux.Dispatcher;
 
 public class FlowableDispatcher<A> extends Dispatcher<Flowable<A>, Disposable> {
 
