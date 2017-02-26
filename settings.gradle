@@ -2,10 +2,9 @@ rootProject.name = 'redux'
 include 'redux-core'
 include 'redux-thunk'
 include 'redux-rx'
-include ':redux-rx2'
+include 'redux-rx2'
 include 'redux-replay'
 include 'redux-android'
 
 include 'sample'
 include 'sample-android'
-

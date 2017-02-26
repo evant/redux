@@ -1,6 +1,7 @@
 package me.tatarka.redux.sample;
 
 import me.tatarka.redux.*;
+import me.tatarka.redux.rx.ObserveStore;
 
 public class CompositeStateSample {
 

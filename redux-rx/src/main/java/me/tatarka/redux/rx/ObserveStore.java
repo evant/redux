@@ -1,4 +1,6 @@
-package me.tatarka.redux;
+package me.tatarka.redux.rx;
+
+import me.tatarka.redux.SimpleStore;
 
 import rx.Emitter;
 import rx.Observable;

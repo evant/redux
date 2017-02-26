@@ -1,21 +1,23 @@
-package me.tatarka.redux;
+package me.tatarka.redux.rx;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-
-import io.reactivex.Completable;
-import io.reactivex.Maybe;
-import io.reactivex.Observable;
-import io.reactivex.Single;
-import io.reactivex.functions.Action;
-import io.reactivex.subscribers.TestSubscriber;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import me.tatarka.redux.Dispatcher;
+import me.tatarka.redux.Reducer;
+import me.tatarka.redux.SimpleStore;
+
+import rx.Observable;
+import rx.Single;
+import rx.functions.Action0;
+import rx.observers.TestSubscriber;
 
 import static org.junit.Assert.assertTrue;
 
@@ -24,15 +26,18 @@ public class ObservableDispatcherTest {
 
     @Test
     public void subscription_receives_initial_state() {
+        TestSubscriber<String> testSubscriber = new TestSubscriber<>();
         SimpleStore<String> store = new SimpleStore<>("test1");
-        TestSubscriber<String> testSubscriber = ObserveStore.flowable(store).test();
+        ObserveStore.observable(store).subscribe(testSubscriber);
+
         testSubscriber.assertValue("test1");
     }
 
     @Test
     public void subscription_receives_updated_state() {
+        TestSubscriber<String> testSubscriber = new TestSubscriber<>();
         SimpleStore<String> store = new SimpleStore<>("test1");
-        TestSubscriber<String> testSubscriber = ObserveStore.flowable(store).test();
+        ObserveStore.observable(store).subscribe(testSubscriber);
         store.setState("test2");
 
         testSubscriber.assertValues("test1", "test2");
@@ -40,9 +45,9 @@ public class ObservableDispatcherTest {
 
     @Test
     public void canceled_subscription_no_longer_receives_updates() {
+        TestSubscriber<String> testSubscriber = new TestSubscriber<>();
         SimpleStore<String> store = new SimpleStore<>("test1");
-        TestSubscriber<String> testSubscriber = ObserveStore.flowable(store).test();
-        testSubscriber.dispose();
+        ObserveStore.observable(store).subscribe(testSubscriber).unsubscribe();
         store.setState("test2");
 
         testSubscriber.assertValue("test1");
@@ -53,6 +58,7 @@ public class ObservableDispatcherTest {
         final int JOB_COUNT = 100;
 
         ExecutorService exec = Executors.newFixedThreadPool(JOB_COUNT);
+        TestSubscriber<String> testSubscriber = new TestSubscriber<>();
         final SimpleStore<String> store = new SimpleStore<>("test");
         final Dispatcher<String, String> dispatcher = Dispatcher.forStore(store, new Reducer<String, String>() {
             @Override
@@ -60,7 +66,7 @@ public class ObservableDispatcherTest {
                 return action;
             }
         });
-        TestSubscriber<String> testSubscriber = ObserveStore.flowable(store).test();
+        ObserveStore.observable(store).subscribe(testSubscriber);
 
         List<Callable<Void>> jobs = new ArrayList<>(JOB_COUNT);
         for (int i = 0; i < JOB_COUNT; i++) {
@@ -89,7 +95,8 @@ public class ObservableDispatcherTest {
         };
         SimpleStore<String> store = new SimpleStore<>("test1");
         ObservableDispatcher<String> dispatcher = new ObservableDispatcher<>(Dispatcher.forStore(store, reducer));
-        TestSubscriber<String> testSubscriber = ObserveStore.flowable(store).test();
+        TestSubscriber<String> testSubscriber = new TestSubscriber<>();
+        ObserveStore.observable(store).subscribe(testSubscriber);
         dispatcher.dispatch(Observable.just("test2"));
 
         testSubscriber.assertValues("test1", "test2");
@@ -105,7 +112,8 @@ public class ObservableDispatcherTest {
         };
         SimpleStore<String> store = new SimpleStore<>("test1");
         ObservableDispatcher<String> dispatcher = new ObservableDispatcher<>(Dispatcher.forStore(store, reducer));
-        TestSubscriber<String> testSubscriber = ObserveStore.flowable(store).test();
+        TestSubscriber<String> testSubscriber = new TestSubscriber<>();
+        ObserveStore.observable(store).subscribe(testSubscriber);
         dispatcher.dispatch(Observable.just("test2", "test3"));
 
         testSubscriber.assertValues("test1", "test2", "test3");
@@ -121,7 +129,8 @@ public class ObservableDispatcherTest {
         };
         SimpleStore<String> store = new SimpleStore<>("test1");
         SingleDispatcher<String> dispatcher = new SingleDispatcher<>(Dispatcher.forStore(store, reducer));
-        TestSubscriber<String> testSubscriber = ObserveStore.flowable(store).test();
+        TestSubscriber<String> testSubscriber = new TestSubscriber<>();
+        ObserveStore.observable(store).subscribe(testSubscriber);
         dispatcher.dispatch(Single.just("test2"));
 
         testSubscriber.assertValues("test1", "test2");
@@ -131,46 +140,17 @@ public class ObservableDispatcherTest {
     public void dispatch_completable() {
         SimpleStore<String> store = new SimpleStore<>("test1");
         CompletableDispatcher dispatcher = new CompletableDispatcher();
-        TestSubscriber<String> testSubscriber = ObserveStore.flowable(store).test();
+        TestSubscriber<String> testSubscriber = new TestSubscriber<>();
+        ObserveStore.observable(store).subscribe(testSubscriber);
         final boolean[] completableCalled = new boolean[1];
-        dispatcher.dispatch(Completable.fromAction(new Action() {
+        dispatcher.dispatch(rx.Completable.fromAction(new Action0() {
             @Override
-            public void run() throws Exception {
+            public void call() {
                 completableCalled[0] = true;
             }
         }));
 
         testSubscriber.assertValues("test1");
         assertTrue(completableCalled[0]);
-    }
-
-    @Test
-    public void dispatch_empty_maybe() {
-        Reducer<String, String> reducer = new Reducer<String, String>() {
-            @Override
-            public String reduce(String action, String state) {
-                return action;
-            }
-        };
-        SimpleStore<String> store = new SimpleStore<>("test1");
-        MaybeDispatcher<String> dispatcher = new MaybeDispatcher<>(Dispatcher.forStore(store, reducer));
-        TestSubscriber<String> testSubscriber = ObserveStore.flowable(store).test();
-        dispatcher.dispatch(Maybe.<String>empty());
-        testSubscriber.assertValues("test1");
-    }
-
-    @Test
-    public void dispatch_non_empty_maybe() {
-        Reducer<String, String> reducer = new Reducer<String, String>() {
-            @Override
-            public String reduce(String action, String state) {
-                return action;
-            }
-        };
-        SimpleStore<String> store = new SimpleStore<>("test1");
-        MaybeDispatcher<String> dispatcher = new MaybeDispatcher<>(Dispatcher.forStore(store, reducer));
-        TestSubscriber<String> testSubscriber = ObserveStore.flowable(store).test();
-        dispatcher.dispatch(Maybe.just("test2"));
-        testSubscriber.assertValues("test1", "test2");
     }
 }
