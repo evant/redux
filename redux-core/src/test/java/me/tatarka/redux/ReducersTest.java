@@ -54,4 +54,41 @@ public class ReducersTest {
 
         assertEquals("test1", state);
     }
+
+    @Test
+    public void matching_reducer_handles_nonmatching_case() {
+        Reducer<String, String> stringReducer = Reducers.id();
+
+        Reducer<Object, String> matching = Reducers.<Object, String>matchClass()
+                .when(String.class, stringReducer)
+                .when(String.class, stringReducer)
+                .when(String.class, stringReducer);
+
+        String state = matching.reduce(new Object(), "123");
+        assertEquals("123", state);
+    }
+
+    @Test
+    public void matching_reducer_runs_first_matching_reducer() {
+        Reducer<String, String> shouldNotRun = new Reducer<String, String>() {
+            @Override
+            public String reduce(String action, String state) {
+                return "X";
+            }
+        };
+        Reducer<String, String> shouldRun = new Reducer<String, String>() {
+            @Override
+            public String reduce(String action, String state) {
+                return "valid";
+            }
+        };
+
+        Reducer<String, String> matching = Reducers.<String, String>matchValue()
+                .when("action1", shouldNotRun)
+                .when("action2", shouldRun)
+                .when("action3", shouldNotRun);
+
+        String state = matching.reduce("action2", "don'tcare");
+        assertEquals("valid", state);
+    }
 }

@@ -1,5 +1,8 @@
 package me.tatarka.redux;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Utility functions to help you with composing your reducers.
  */
@@ -75,9 +78,7 @@ public class Reducers {
     }
 
     static abstract class BaseMatchReducer<A, S, M> implements Reducer<A, S> {
-        private Object[] matchers = new Object[1];
-        private Reducer[] reducers = new Reducer[1];
-        private int size;
+        private Map<M, Reducer> reducers = new HashMap<>();
 
         BaseMatchReducer() {
         }
@@ -89,25 +90,15 @@ public class Reducers {
             if (reducer == null) {
                 throw new NullPointerException("reducer == null");
             }
-            if (size >= matchers.length) {
-                Object[] newMatchers = new Object[size * 2];
-                System.arraycopy(matchers, 0, newMatchers, 0, size);
-                matchers = newMatchers;
-                Reducer[] newReducers = new Reducer[size * 2];
-                System.arraycopy(reducers, 0, newReducers, 0, size);
-                reducers = newReducers;
-            }
-            matchers[size] = matcher;
-            reducers[size] = reducer;
-            size += 1;
+            reducers.put(matcher, reducer);
         }
 
         @Override
         @SuppressWarnings("unchecked")
         public S reduce(A action, S state) {
-            for (int i = 0; i < matchers.length; i++) {
-                if (match((M) matchers[i], action)) {
-                    return (S) reducers[i].reduce(action, state);
+            for(Map.Entry<M, Reducer> entry : reducers.entrySet()) {
+                if(match(entry.getKey(), action)) {
+                    return (S) entry.getValue().reduce(action, state);
                 }
             }
             return state;
