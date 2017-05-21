@@ -1,7 +1,8 @@
 # redux for java/android (name tbd)
 Redux ported to java/android
 
-I've seen a few of these floating around, but this one has some specific benefits over other implementations.
+I've seen a few of these floating around, but this one has some specific benefits over other
+implementations.
 * Any object can be used as an action or state.
 * Built-in functions to help compose reducers
 * Middleware that's actually implemented like you'd expect.
@@ -20,6 +21,7 @@ repositories {
 dependencies {
   compile 'me.tatarka.redux:redux-core:1.0-SNAPSHOT'
   compile 'me.tatarka.redux:redux-android:1.0-SNAPSHOT'
+  compile 'me.tatarka.redux:redux-android-lifecycle:1.0-SNAPSHOT'
   compile 'me.tatarka.redux:redux-thunk:1.0-SNAPSHOT'
   compile 'me.tatarka.redux:redux-rx:1.0-SNAPSHOT'
   compile 'me.tatarka.redux:redux-rx2:1.0-SNAPSHOT'
@@ -51,12 +53,12 @@ store.addListener(new Listener<State>() {
 
 Or with rxjava (using redux-rx).
 ```java
-ObserveStore.observable(store).subscribe(state -> { ... });
+ObservableAdapter.observable(store).subscribe(state -> { ... });
 ```
 
 Or with rxjava2 (using redux-rx2).
 ```java
-ObserveStore.flowable(store).subscribe(state -> { ... });
+FlowableAdapter.flowable(store).subscribe(state -> { ... });
 ```
 
 Create a dispatcher with optional middleware.
@@ -72,54 +74,43 @@ dispatcher.dispatch(new MyAction());
 
 ## Android
 
-I suggest you use the `StateLoader` as it will tie your state updates with the activity/fragment lifecycle and ensure callbacks happen on the main thread.
+You can observe your store with `LiveData` which will properly tie into the android lifecycle.
 ```java
-public class MyActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<State> {
-  SimpleStore<State> store = ...; // obtain this from somewhere, singleton maybe.
+LiveDataAdapter.liveData(store).observe(this, state -> { ... });
+```
 
+You can use `StoreViewModel` to keep your store around for the lifetime of an activity/fragment
+surviving configuration changes.
+```java
+public class MyViewModel extends StoreViewModel<State, MyViewModel> {
+  public MyViewModel() {
+    super(new MyStore());
+  }
+}
+```
+
+```java
+public class MyActivity extends LifecycleActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
-    getSupportLoaderManager().initLoader(0, null, this);
-  }
-
-  @Override
-  public Loader<State> onCreateLoader(int id, Bundle args) {
-    return StateLoader.create(this, store);
-  }
-
-  @Override
-  public void onLoadFinished(Loader<State> loader, State data) {
-    ...;
-  }
-
-  @Override
-  public void onLoaderReset(Loader<TodoList> loader) {
+    super.onCreate(savedInstanceState);
+    MyViewModel viewModel = ViewModelProviders.of(this).get(MyViewModel.class);
+    MyStore store = viewModel.getStore();
+    viewModel.getState().observe(this, state -> { ... });
   }
 }
 ```
 
-You may also subclass `StateLoader` if you want the loader to manage the lifecycle of the store.
-```java
-public class MyStateLoader extends StateLoader<MyStore, State> {
-  public TodoStateLoader(Context context) {
-    super(context);
-  }
-
-  @Override
-  protected MyStore onCreateStore() {
-    return new MyStore(..);
-  }
-}
-```
-
-Since the loader relays state changes to the main thread, you may lose important stack trace info.
-You can get it back by setting `StateLoader#debug(true)` or `StateLoader.debugAll(true)`. This
-creates an expensive stacktrace on every dispatch so you probably don't want it on release. A common
-pattern would be to put `StateLoader.debugAll(BuildConfig.DEBUG)` in your setup code.
+Since `LiveData` relays state changes to the main thread, you may lose important stack trace info.
+You can get it back by calling `LiveDataAdapter.liveData(store, true)` or
+`LiveDataAdapter.setDebugAll(true)`. This creates an expensive stacktrace on every dispatch so you
+probably don't want it on release. A common pattern would be to put
+`LiveDataAdapter.setDebugAll(BuildConfig.DEBUG)` in your setup code.
 
 ## Composing Reducers
 
-It's common you'd want to switch on actions values or class type. `Reducers.matchValue()` and `Reducers.matchClass()` makes this easy.
+It's common you'd want to switch on actions values or class type. `Reducers.matchValue()` and
+`Reducers.matchClass()` makes this easy.
 ```java
 Reducer<String, State> reducer = Reducers.matchValue()
   .when("action1", new Action1Reducer())
@@ -137,7 +128,8 @@ Reducer<Object, State> reducer = Reducers.match()
   .when(Predicates.instanceOf(Action2.class), new Action2Reducer());
 ```
 
-You can also run a sequence of reducers with `Reducers.all(reducer1, reducer2, ...)` or run reducers until one changes the state with `Reducers.first(reducer1, reducer2, ...)`.
+You can also run a sequence of reducers with `Reducers.all(reducer1, reducer2, ...)` or run reducers
+until one changes the state with `Reducers.first(reducer1, reducer2, ...)`.
 
 ## Thunk Dispatcher
 
@@ -176,8 +168,9 @@ dispatcher.dispatch(callThatReturnsObservable()
 
 ## Subclassing a Store
 
-Don't want to have to worry about passing around the store and dispatchers? You can subclass `SimpleStore` and create
-your own dispatch methods. This also simplifies generics a bit when using throughout your app.
+Don't want to have to worry about passing around the store and dispatchers? You can subclass
+`SimpleStore` and create your own dispatch methods. This also simplifies generics a bit when using
+throughout your app.
 
 ```java
 public class MyStore extends SimpleStore<State> {
