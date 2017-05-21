@@ -1,7 +1,7 @@
 package me.tatarka.redux.sample;
 
 import me.tatarka.redux.*;
-import me.tatarka.redux.rx.ObserveStore;
+import me.tatarka.redux.rx.ObservableAdapter;
 
 public class CompositeStateSample {
 
@@ -75,7 +75,7 @@ public class CompositeStateSample {
         SimpleStore<Person> store = new SimpleStore<>(new Person("nobody", 0));
         Dispatcher<Action, Action> dispatcher = Dispatcher.forStore(store, updatePerson)
                 .chain(new LogMiddleware<>(store));
-        ObserveStore.observable(store).subscribe(person -> System.out.println("state: " + person));
+        ObservableAdapter.observable(store).subscribe(person -> System.out.println("state: " + person));
         dispatcher.dispatch(new ChangeName("Bob"));
         dispatcher.dispatch(new IncrementAge());
     }

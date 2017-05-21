@@ -17,14 +17,14 @@ public class TestMiddleware<S, A, R> implements Middleware<A, R> {
 
     public TestMiddleware(Store<S> store) {
         this.store = store;
-        states.add(store.state());
+        states.add(store.getState());
     }
 
     @Override
     public R dispatch(Next<A, R> next, A action) {
         actions.add(action);
         R result = next.next(action);
-        states.add(store.state());
+        states.add(store.getState());
         return result;
     }
 

@@ -15,7 +15,7 @@ public class SimpleStore<S> implements Store<S> {
     }
 
     @Override
-    public S state() {
+    public S getState() {
         return state;
     }
 

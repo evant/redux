@@ -18,7 +18,7 @@ public class ReplayMiddleware<S, A, R> implements Middleware<A, R> {
     private boolean runningActions;
 
     public ReplayMiddleware(Store<S> store, Reducer<A, S> reducer) {
-        this.initialState = store.state();
+        this.initialState = store.getState();
         this.store = store;
         this.dispatcher = Dispatcher.forStore(store, reducer);
     }

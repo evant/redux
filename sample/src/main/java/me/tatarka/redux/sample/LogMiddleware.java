@@ -15,9 +15,9 @@ public class LogMiddleware<S, A, R> implements Middleware<A, R> {
 
     @Override
     public R dispatch(Next<A, R> next, A action) {
-        String before = Objects.toString(store.state());
+        String before = Objects.toString(store.getState());
         R result = next.next(action);
-        String after = Objects.toString(store.state());
+        String after = Objects.toString(store.getState());
         System.out.println(before + " -> " + action + " -> " + after);
         return result;
     }

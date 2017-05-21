@@ -1,4 +1,4 @@
-package me.tatarka.redux;
+package me.tatarka.redux.android;
 
 import android.content.Context;
 import android.os.Handler;
@@ -8,17 +8,24 @@ import android.support.annotation.MainThread;
 import android.support.v4.content.Loader;
 import android.util.Pair;
 
+import me.tatarka.redux.SimpleStore;
+import me.tatarka.redux.Store;
+
+/**
+ * @deprecated Use rx or LiveData instead to observe state changes. Use ViewModel to hold an instance.
+ */
+@Deprecated
 public abstract class StateLoader<S, SR extends SimpleStore<S>> extends Loader<S> {
 
-    private static boolean debugAll = true;
+    private static boolean debugAll = false;
 
     /**
      * Sets 'debug' mode for all {@code StateLoader}s. This will only take effect on loaders
      * created <em>after</em> this is called so you should call it as early as possible.
      *
-     * @see #debug(boolean)
+     * @see #setDebug(boolean)
      */
-    public static void debugAll(boolean value) {
+    public static void setDebugAll(boolean value) {
         debugAll = value;
     }
 
@@ -45,7 +52,7 @@ public abstract class StateLoader<S, SR extends SimpleStore<S>> extends Loader<S
     /**
      * Sets 'debug' mode which provides the dispatch source in stacktraces.
      */
-    public void debug(boolean value) {
+    public void setDebug(boolean value) {
         debug = value;
     }
 
@@ -58,7 +65,7 @@ public abstract class StateLoader<S, SR extends SimpleStore<S>> extends Loader<S
      * Returns the store for this loader. This will lazily call {@link #onCreateStore()}.
      */
     @MainThread
-    public final SR store() {
+    public final SR getStore() {
         if (store == null) {
             store = onCreateStore();
         }
@@ -67,12 +74,12 @@ public abstract class StateLoader<S, SR extends SimpleStore<S>> extends Loader<S
 
     @Override
     protected void onStartLoading() {
-        store().addListener(handler);
+        getStore().addListener(handler);
     }
 
     @Override
     protected void onStopLoading() {
-        store().removeListener(handler);
+        getStore().removeListener(handler);
     }
 
     /**

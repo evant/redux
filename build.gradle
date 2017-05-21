@@ -6,6 +6,7 @@ buildscript {
     dependencies {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.6'
         classpath 'ru.vyarus:gradle-pom-plugin:1.1.0'
+        classpath 'com.android.tools.build:gradle:2.3.0'
     }
 }
 
@@ -14,6 +15,7 @@ allprojects {
     version '1.0-SNAPSHOT'
 
     repositories {
-        mavenCentral()
+        jcenter()
+        maven { url 'https://maven.google.com' }
     }
 }

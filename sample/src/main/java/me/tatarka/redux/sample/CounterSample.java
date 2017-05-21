@@ -1,7 +1,7 @@
 package me.tatarka.redux.sample;
 
 import me.tatarka.redux.*;
-import me.tatarka.redux.rx.ObserveStore;
+import me.tatarka.redux.rx.ObservableAdapter;
 
 public class CounterSample {
 
@@ -42,7 +42,7 @@ public class CounterSample {
         SimpleStore<Integer> store = new SimpleStore<>(0);
         Dispatcher<Action, Action> dispatcher = Dispatcher.forStore(store, counter)
                 .chain(new LogMiddleware<>(store));
-        ObserveStore.observable(store).subscribe(count -> System.out.println("state: " + count));
+        ObservableAdapter.observable(store).subscribe(count -> System.out.println("state: " + count));
         dispatcher.dispatch(new Increment());
         dispatcher.dispatch(new Add(2));
     }

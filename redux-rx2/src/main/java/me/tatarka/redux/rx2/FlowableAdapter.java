@@ -11,7 +11,7 @@ import me.tatarka.redux.SimpleStore;
 /**
  * Handles constructing a flowable from an {@link SimpleStore}.
  */
-public class ObserveStore {
+public class FlowableAdapter {
 
     public static <S> Flowable<S> flowable(final SimpleStore<S> store) {
         return Flowable.create(new FlowableOnSubscribe<S>() {

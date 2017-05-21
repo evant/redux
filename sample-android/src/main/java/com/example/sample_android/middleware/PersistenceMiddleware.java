@@ -19,7 +19,7 @@ public class PersistenceMiddleware<A, R> implements Middleware<A, R> {
     @Override
     public R dispatch(Next<A, R> next, A action) {
         R result = next.next(action);
-        datastore.store(store.state().items());
+        datastore.store(store.getState().items());
         return result;
     }
 }

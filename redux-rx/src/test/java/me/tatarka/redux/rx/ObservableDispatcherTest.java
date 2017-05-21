@@ -28,7 +28,7 @@ public class ObservableDispatcherTest {
     public void subscription_receives_initial_state() {
         TestSubscriber<String> testSubscriber = new TestSubscriber<>();
         SimpleStore<String> store = new SimpleStore<>("test1");
-        ObserveStore.observable(store).subscribe(testSubscriber);
+        ObservableAdapter.observable(store).subscribe(testSubscriber);
 
         testSubscriber.assertValue("test1");
     }
@@ -37,7 +37,7 @@ public class ObservableDispatcherTest {
     public void subscription_receives_updated_state() {
         TestSubscriber<String> testSubscriber = new TestSubscriber<>();
         SimpleStore<String> store = new SimpleStore<>("test1");
-        ObserveStore.observable(store).subscribe(testSubscriber);
+        ObservableAdapter.observable(store).subscribe(testSubscriber);
         store.setState("test2");
 
         testSubscriber.assertValues("test1", "test2");
@@ -47,7 +47,7 @@ public class ObservableDispatcherTest {
     public void canceled_subscription_no_longer_receives_updates() {
         TestSubscriber<String> testSubscriber = new TestSubscriber<>();
         SimpleStore<String> store = new SimpleStore<>("test1");
-        ObserveStore.observable(store).subscribe(testSubscriber).unsubscribe();
+        ObservableAdapter.observable(store).subscribe(testSubscriber).unsubscribe();
         store.setState("test2");
 
         testSubscriber.assertValue("test1");
@@ -66,7 +66,7 @@ public class ObservableDispatcherTest {
                 return action;
             }
         });
-        ObserveStore.observable(store).subscribe(testSubscriber);
+        ObservableAdapter.observable(store).subscribe(testSubscriber);
 
         List<Callable<Void>> jobs = new ArrayList<>(JOB_COUNT);
         for (int i = 0; i < JOB_COUNT; i++) {
@@ -96,7 +96,7 @@ public class ObservableDispatcherTest {
         SimpleStore<String> store = new SimpleStore<>("test1");
         ObservableDispatcher<String> dispatcher = new ObservableDispatcher<>(Dispatcher.forStore(store, reducer));
         TestSubscriber<String> testSubscriber = new TestSubscriber<>();
-        ObserveStore.observable(store).subscribe(testSubscriber);
+        ObservableAdapter.observable(store).subscribe(testSubscriber);
         dispatcher.dispatch(Observable.just("test2"));
 
         testSubscriber.assertValues("test1", "test2");
@@ -113,7 +113,7 @@ public class ObservableDispatcherTest {
         SimpleStore<String> store = new SimpleStore<>("test1");
         ObservableDispatcher<String> dispatcher = new ObservableDispatcher<>(Dispatcher.forStore(store, reducer));
         TestSubscriber<String> testSubscriber = new TestSubscriber<>();
-        ObserveStore.observable(store).subscribe(testSubscriber);
+        ObservableAdapter.observable(store).subscribe(testSubscriber);
         dispatcher.dispatch(Observable.just("test2", "test3"));
 
         testSubscriber.assertValues("test1", "test2", "test3");
@@ -130,7 +130,7 @@ public class ObservableDispatcherTest {
         SimpleStore<String> store = new SimpleStore<>("test1");
         SingleDispatcher<String> dispatcher = new SingleDispatcher<>(Dispatcher.forStore(store, reducer));
         TestSubscriber<String> testSubscriber = new TestSubscriber<>();
-        ObserveStore.observable(store).subscribe(testSubscriber);
+        ObservableAdapter.observable(store).subscribe(testSubscriber);
         dispatcher.dispatch(Single.just("test2"));
 
         testSubscriber.assertValues("test1", "test2");
@@ -141,7 +141,7 @@ public class ObservableDispatcherTest {
         SimpleStore<String> store = new SimpleStore<>("test1");
         CompletableDispatcher dispatcher = new CompletableDispatcher();
         TestSubscriber<String> testSubscriber = new TestSubscriber<>();
-        ObserveStore.observable(store).subscribe(testSubscriber);
+        ObservableAdapter.observable(store).subscribe(testSubscriber);
         final boolean[] completableCalled = new boolean[1];
         dispatcher.dispatch(rx.Completable.fromAction(new Action0() {
             @Override

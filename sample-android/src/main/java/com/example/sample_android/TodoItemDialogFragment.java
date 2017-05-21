@@ -1,12 +1,12 @@
 package com.example.sample_android;
 
 import android.app.Dialog;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -16,18 +16,14 @@ import android.widget.TextView;
 import com.example.sample_android.action.Add;
 import com.example.sample_android.action.Edit;
 import com.example.sample_android.state.TodoItem;
-import com.example.sample_android.state.TodoList;
-
 import com.example.sample_android.store.MainStore;
-import me.tatarka.redux.StateLoader;
-import me.tatarka.redux.Store;
 
 public class TodoItemDialogFragment extends DialogFragment {
-    
+
     public static TodoItemDialogFragment newInstance() {
         return newInstance(-1);
     }
-    
+
     public static TodoItemDialogFragment newInstance(int id) {
         Bundle args = new Bundle();
         args.putInt("id", id);
@@ -42,7 +38,7 @@ public class TodoItemDialogFragment extends DialogFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        store = ((TodoStateLoader) getActivity().getSupportLoaderManager().<TodoList>getLoader(0)).store();
+        store = ViewModelProviders.of(getActivity()).get(TodoViewModel.class).getStore();
         id = getArguments().getInt("id", -1);
     }
 
@@ -52,14 +48,14 @@ public class TodoItemDialogFragment extends DialogFragment {
         final View view = LayoutInflater.from(getContext()).inflate(R.layout.item_dialog, null);
         final TextView textView = (TextView) view.findViewById(R.id.text);
         String text = null;
-        for (TodoItem todoItem : store.state().items()) {
+        for (TodoItem todoItem : store.getState().items()) {
             if (todoItem.id() == id) {
                 text = todoItem.text();
                 break;
             }
         }
         textView.setText(text);
-        
+
         return new AlertDialog.Builder(getContext(), getTheme())
                 .setTitle(id >= 0 ? "Edit" : "New")
                 .setView(view)

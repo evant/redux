@@ -1,4 +1,4 @@
-package me.tatarka.redux;
+package me.tatarka.redux.android;
 
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
@@ -10,6 +10,10 @@ import org.junit.runner.RunWith;
 
 import java.util.concurrent.TimeUnit;
 
+import me.tatarka.redux.Dispatcher;
+import me.tatarka.redux.Reducer;
+import me.tatarka.redux.Reducers;
+import me.tatarka.redux.SimpleStore;
 import rx.Emitter;
 import rx.Observable;
 import rx.functions.Action1;
@@ -21,8 +25,8 @@ public class StateLoaderTest {
 
     @Test
     public void loader_delivers_initial_state() {
-        ObservableStore<String> store = new ObservableStore<>("test", Reducers.<Object, String>id());
-        StateLoader<String> loader = StateLoader.create(InstrumentationRegistry.getContext(), store);
+        ObservableStore<String> store = new ObservableStore<>("test", Reducers.<String, String>id());
+        StateLoader<String, ObservableStore<String>> loader = StateLoader.create(InstrumentationRegistry.getContext(), store);
         TestSubscriber<String> testSubscriber = new TestSubscriber<>();
         fromLoader(loader).subscribe(testSubscriber);
         loader.startLoading();
@@ -33,14 +37,14 @@ public class StateLoaderTest {
 
     @Test
     public void loader_delivers_changed_state() {
-        Reducer<Object, String> reducer = new Reducer<Object, String>() {
+        Reducer<String, String> reducer = new Reducer<String, String>() {
             @Override
-            public String reduce(Object action, String state) {
+            public String reduce(String action, String state) {
                 return action.toString();
             }
         };
         ObservableStore<String> store = new ObservableStore<>("test1", reducer);
-        StateLoader<String> loader = StateLoader.create(InstrumentationRegistry.getContext(), store);
+        StateLoader<String, ObservableStore<String>> loader = StateLoader.create(InstrumentationRegistry.getContext(), store);
         TestSubscriber<String> testSubscriber = new TestSubscriber<>();
         fromLoader(loader).subscribe(testSubscriber);
         loader.startLoading();
@@ -52,14 +56,14 @@ public class StateLoaderTest {
 
     @Test
     public void loader_ignores_state_changes_when_stopped() {
-        Reducer<Object, String> reducer = new Reducer<Object, String>() {
+        Reducer<String, String> reducer = new Reducer<String, String>() {
             @Override
-            public String reduce(Object action, String state) {
+            public String reduce(String action, String state) {
                 return action.toString();
             }
         };
         ObservableStore<String> store = new ObservableStore<>("test1", reducer);
-        StateLoader<String> loader = StateLoader.create(InstrumentationRegistry.getContext(), store);
+        StateLoader<String, ObservableStore<String>> loader = StateLoader.create(InstrumentationRegistry.getContext(), store);
         TestSubscriber<String> testSubscriber = new TestSubscriber<>();
         fromLoader(loader).subscribe(testSubscriber);
         loader.startLoading();
@@ -75,15 +79,15 @@ public class StateLoaderTest {
     // this ignore to see what the stacktrace looks like.
     @Ignore
     public void loader_includes_dispatched_stacktrace_on_failure() throws InterruptedException {
-        Reducer<Object, String> reducer = new Reducer<Object, String>() {
+        Reducer<String, String> reducer = new Reducer<String, String>() {
             @Override
-            public String reduce(Object action, String state) {
+            public String reduce(String action, String state) {
                 return action.toString();
             }
         };
         ObservableStore<String> store = new ObservableStore<>("test1", reducer);
-        StateLoader<String> loader = StateLoader.create(InstrumentationRegistry.getContext(), store);
-        loader.debug(true);
+        StateLoader<String, ObservableStore<String>> loader = StateLoader.create(InstrumentationRegistry.getContext(), store);
+        loader.setDebug(true);
         loader.registerListener(0, new Loader.OnLoadCompleteListener<String>() {
             @Override
             public void onLoadComplete(Loader<String> loader, String data) {
@@ -116,5 +120,18 @@ public class StateLoaderTest {
                 loader.registerListener(0, listener);
             }
         }, Emitter.BackpressureMode.BUFFER);
+    }
+
+    private static class ObservableStore<S> extends SimpleStore<S> {
+        private final Dispatcher<String, String> dispatcher;
+
+        public ObservableStore(S initialState, Reducer<String, S> reducer) {
+            super(initialState);
+            dispatcher = Dispatcher.forStore(this, reducer);
+        }
+
+        public String dispatch(String action) {
+            return dispatcher.dispatch(action);
+        }
     }
 }

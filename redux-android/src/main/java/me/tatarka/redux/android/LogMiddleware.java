@@ -1,4 +1,4 @@
-package me.tatarka.redux;
+package me.tatarka.redux.android;
 
 import android.util.Log;
 import me.tatarka.redux.middleware.Middleware;

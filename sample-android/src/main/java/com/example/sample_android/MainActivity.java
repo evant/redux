@@ -1,10 +1,14 @@
 package com.example.sample_android;
 
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.LifecycleOwner;
+import android.arch.lifecycle.LifecycleRegistry;
+import android.arch.lifecycle.LifecycleRegistryOwner;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -32,16 +36,17 @@ import com.example.sample_android.action.LoadActionCreator;
 import com.example.sample_android.action.Remove;
 import com.example.sample_android.state.TodoItem;
 import com.example.sample_android.state.TodoList;
+import com.example.sample_android.store.MainStore;
 
 import java.util.Collections;
 import java.util.List;
 
-import com.example.sample_android.store.MainStore;
 import me.tatarka.redux.ReplayMiddleware;
-import me.tatarka.redux.Store;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<TodoList> {
-    
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, LifecycleRegistryOwner {
+
+    private final LifecycleRegistry registry = new LifecycleRegistry(this);
+
     MainStore store;
     ReplayMiddleware<TodoList, Action, Action> replayMiddleware;
     Adapter adapter = new Adapter();
@@ -75,16 +80,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         RecyclerView actionList = (RecyclerView) findViewById(R.id.action_list);
         actionList.setAdapter(actionListAdapter);
-        
+
         loading = (ProgressBar) findViewById(R.id.loading);
 
-        TodoStateLoader loader = (TodoStateLoader) getSupportLoaderManager().initLoader(0, null, this);
-        store = loader.store();
-        replayMiddleware = loader.replayMiddleware();
+        TodoViewModel viewModel = ViewModelProviders.of(this).get(TodoViewModel.class);
+        store = viewModel.getStore();
+        replayMiddleware = store.getReplayMiddleware();
 
         if (savedInstanceState == null) {
             store.dispatch(new LoadActionCreator(new Datastore(this)).load());
         }
+
+        viewModel.getState().observe(this, new Observer<TodoList>() {
+            @Override
+            public void onChanged(TodoList data) {
+                loading.setVisibility(data.loading() ? View.VISIBLE : View.GONE);
+                if (data.loading()) {
+                    fab.hide();
+                } else {
+                    fab.show();
+                }
+                adapter.setState(data);
+                actionListAdapter.setState(replayMiddleware.actions());
+            }
+        });
     }
 
     @Override
@@ -145,25 +164,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public Loader<TodoList> onCreateLoader(int id, Bundle args) {
-        return new TodoStateLoader(this);
-    }
-
-    @Override
-    public void onLoadFinished(Loader<TodoList> loader, TodoList data) {
-        loading.setVisibility(data.loading() ? View.VISIBLE : View.GONE);
-        if (data.loading()) {
-            fab.hide();
-        } else {
-            fab.show();
-        }
-        adapter.setState(data);
-        actionListAdapter.setState(replayMiddleware.actions());
-    }
-
-    @Override
-    public void onLoaderReset(Loader<TodoList> loader) {
-
+    public LifecycleRegistry getLifecycle() {
+        return registry;
     }
 
     class Adapter extends RecyclerView.Adapter<Adapter.Holder> {

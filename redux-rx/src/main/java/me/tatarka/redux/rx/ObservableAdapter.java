@@ -12,7 +12,7 @@ import rx.observers.SerializedObserver;
 /**
  * Handles constructing an observable from an {@link SimpleStore}.
  */
-public class ObserveStore {
+public class ObservableAdapter {
 
     public static <S> Observable<S> observable(final SimpleStore<S> store) {
         return Observable.fromEmitter(new Action1<Emitter<S>>() {

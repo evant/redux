@@ -7,6 +7,7 @@ import com.example.sample_android.middleware.PersistenceMiddleware;
 import com.example.sample_android.reducer.TodoListReducers;
 import com.example.sample_android.state.TodoList;
 import me.tatarka.redux.*;
+import me.tatarka.redux.android.LogMiddleware;
 
 /**
  * To keep everything together, you can subclass {@link SimpleStore} and add your own {@code dispatch()} methods to it.
@@ -37,7 +38,7 @@ public class MainStore extends SimpleStore<TodoList> {
         thunkDispatcher.dispatch(thunk);
     }
 
-    public ReplayMiddleware<TodoList, Action, Action> replayMiddleware() {
+    public ReplayMiddleware<TodoList, Action, Action> getReplayMiddleware() {
         return replayMiddleware;
     }
 }

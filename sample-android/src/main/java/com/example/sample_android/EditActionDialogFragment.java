@@ -1,6 +1,7 @@
 package com.example.sample_android;
 
 import android.app.Dialog;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -44,7 +45,7 @@ public class EditActionDialogFragment extends DialogFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        middleware = ((TodoStateLoader) getActivity().getSupportLoaderManager().<TodoList>getLoader(0)).replayMiddleware();
+        middleware = ViewModelProviders.of(getActivity()).get(TodoViewModel.class).getStore().getReplayMiddleware();
         index = getArguments().getInt("index", -1);
     }
 

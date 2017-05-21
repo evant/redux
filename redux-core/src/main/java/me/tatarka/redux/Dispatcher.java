@@ -32,7 +32,7 @@ public abstract class Dispatcher<A, R> {
         return new Dispatcher<A, A>() {
             @Override
             public A dispatch(A action) {
-                store.setState(reducer.reduce(action, store.state()));
+                store.setState(reducer.reduce(action, store.getState()));
                 return action;
             }
         };

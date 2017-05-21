@@ -1,3 +1,4 @@
+include ':redux-android-lifecycle'
 rootProject.name = 'redux'
 include 'redux-core'
 include 'redux-thunk'
