@@ -194,7 +194,7 @@ public class MyStore extends SimpleStore<State> {
   }
 
   public Observable<Action> observable() {
-    return ObserveStore.observable(this);
+    return ObservableAdapter.observable(this);
   }
 }
 ```
