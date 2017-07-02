@@ -13,19 +13,17 @@ implementations.
 
 ```groovy
 repositories {
-  maven {
-    url "https://oss.sonatype.org/content/repositories/snapshots"
-  }
+  mavenCentral()
 }
 
 dependencies {
-  compile 'me.tatarka.redux:redux-core:1.0-SNAPSHOT'
-  compile 'me.tatarka.redux:redux-android:1.0-SNAPSHOT'
-  compile 'me.tatarka.redux:redux-android-lifecycle:1.0-SNAPSHOT'
-  compile 'me.tatarka.redux:redux-thunk:1.0-SNAPSHOT'
-  compile 'me.tatarka.redux:redux-rx:1.0-SNAPSHOT'
-  compile 'me.tatarka.redux:redux-rx2:1.0-SNAPSHOT'
-  compile 'me.tatarka.redux:redux-replay:1.0-SNAPSHOT'
+  compile "me.tatarka.redux:redux-core:0.9"
+  compile "me.tatarka.redux:redux-android:0.9"
+  compile "me.tatarka.redux:redux-android-lifecycle:0.9"
+  compile "me.tatarka.redux:redux-thunk:0.9"
+  compile "me.tatarka.redux:redux-rx:0.9"
+  compile "me.tatarka.redux:redux-rx2:0.9"
+  compile "me.tatarka.redux:redux-replay:0.9"
 }
 ```
 
