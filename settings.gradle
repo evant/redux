@@ -1,11 +1,12 @@
-include ':redux-android-lifecycle'
 rootProject.name = 'redux'
 include 'redux-core'
 include 'redux-thunk'
 include 'redux-rx'
 include 'redux-rx2'
 include 'redux-replay'
+include 'redux-monitor'
 include 'redux-android'
+include 'redux-android-lifecycle'
 
 include 'sample'
 include 'sample-android'

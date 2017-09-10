@@ -17,13 +17,12 @@ repositories {
 }
 
 dependencies {
-  compile "me.tatarka.redux:redux-core:0.9"
-  compile "me.tatarka.redux:redux-android:0.9"
-  compile "me.tatarka.redux:redux-android-lifecycle:0.9"
-  compile "me.tatarka.redux:redux-thunk:0.9"
-  compile "me.tatarka.redux:redux-rx:0.9"
-  compile "me.tatarka.redux:redux-rx2:0.9"
-  compile "me.tatarka.redux:redux-replay:0.9"
+  compile "me.tatarka.redux:redux-core:0.10"
+  compile "me.tatarka.redux:redux-android:0.10"
+  compile "me.tatarka.redux:redux-android-lifecycle:0.10"
+  compile "me.tatarka.redux:redux-thunk:0.10"
+  compile "me.tatarka.redux:redux-rx:0.10"
+  compile "me.tatarka.redux:redux-rx2:0.10"
 }
 ```
 
@@ -198,3 +197,54 @@ public class MyStore extends SimpleStore<State> {
 ```
 
 Now you can just pass the single store around and call `store.dispatch()`.
+
+## Debug Utilities
+
+### Android LogMiddleware
+
+You can log all actions on android with the built-in `LogMiddleware`.
+
+```java
+dispatcher = Dispatcher.forStore(store, reducer)
+  .chain(new LogMiddleware<Action, Action>("ACTION"));
+```
+
+### ReplayMiddleware
+
+You can disable/enable actions and see how that effects your ui with the replay middleware. It will
+replay your modified actions back on the initial state.
+
+```groovy
+compile "me.tatarka.redux:redux-replay:0.10"
+```
+
+```java
+replay = new ReplayMiddleware<State, Action, Action>(store, reducer);
+dispatcher = Dispatcher.forStore(store, reducer)
+  .chain(replay);
+
+replay.actions() // lists all actions that have been dispatched
+replay.disable(index) // disables action at given index
+replay.enable(index) // enables action at the given index
+```
+
+The sample android app includes a debug drawer to let you interact with this middleware.
+
+### Redux Debugging tools integration.
+
+You can connect to [RemoteDev Server](https://github.com/zalmoxisus/remotedev-server) to interact
+with various redux debugging UI's. Currently only displaying actions/state is supported.
+
+```
+npm install -g remotedev-server
+remotedev --hostname=localhost --port=8000
+```
+
+```groovy
+compile "me.tatarka.redux:redux-monitor:0.10"
+```
+
+```java
+dispatcher = Dispatcher.forStore(store, reducer)
+  .chain(new MonitorMiddleware(store));
+```

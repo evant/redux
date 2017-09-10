@@ -10,7 +10,7 @@ import java.util.Iterator;
  * to implement cross-cutting concerns.
  *
  * @param <A> The action type.
- * @param <R> The return type of the reducer. This is implementation-defined.
+ * @param <R> The return type of the dispatcher. This is implementation-defined.
  */
 public abstract class Dispatcher<A, R> {
 

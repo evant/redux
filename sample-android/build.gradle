@@ -1,22 +1,23 @@
 buildscript {
     repositories {
+        google()
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.3'
+        classpath 'com.android.tools.build:gradle:3.0.0-beta5'
     }
 }
 
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.2'
+    compileSdkVersion 26
+    buildToolsVersion '26.0.1'
 
     defaultConfig {
         applicationId "com.example.sample_android"
         minSdkVersion 19
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
         vectorDrawables.useSupportLibrary = true
@@ -35,8 +36,10 @@ dependencies {
     compile project(':redux-android-lifecycle')
     compile project(':redux-replay')
     compile project(':redux-thunk')
-    compile 'com.android.support:appcompat-v7:25.3.l'
-    compile 'com.android.support:design:25.3.1'
+    compile project(':redux-monitor')
+
+    compile 'com.android.support:appcompat-v7:26.0.2'
+    compile 'com.android.support:design:26.0.2'
     compile 'com.jakewharton.auto.value:auto-value-annotations:1.3'
     annotationProcessor 'com.google.auto.value:auto-value:1.3'
     
