@@ -16,7 +16,7 @@ android {
 
 dependencies {
     compile project(':redux-android')
-    compile "android.arch.lifecycle:runtime:1.0.0-alpha9"
-    compile "android.arch.lifecycle:extensions:1.0.0-alpha9"
-    annotationProcessor "android.arch.lifecycle:compiler:1.0.0-alpha9"
+    compile "android.arch.lifecycle:runtime:1.1.0"
+    compile "android.arch.lifecycle:extensions:1.1.0"
+    annotationProcessor "android.arch.lifecycle:compiler:1.1.0"
 }
