@@ -53,7 +53,7 @@ public abstract class Dispatcher<A, R> {
         return new Dispatcher<A, R>() {
             @Override
             public R dispatch(A action) {
-                return middleware.dispatch(new Middleware.Next<A, R>() {
+                return middleware.dispatch(this, new Middleware.Next<A, R>() {
                     @Override
                     public R next(A action) {
                         return Dispatcher.this.dispatch(action);
