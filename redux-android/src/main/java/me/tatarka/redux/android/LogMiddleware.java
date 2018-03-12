@@ -1,6 +1,8 @@
 package me.tatarka.redux.android;
 
 import android.util.Log;
+
+import me.tatarka.redux.Dispatcher;
 import me.tatarka.redux.middleware.Middleware;
 
 public class LogMiddleware<A, R> implements Middleware<A, R> {
@@ -18,7 +20,7 @@ public class LogMiddleware<A, R> implements Middleware<A, R> {
     }
 
     @Override
-    public R dispatch(Next<A, R> next, A action) {
+    public R dispatch(Dispatcher<A, R> dispatcher, Next<A, R> next, A action) {
         Log.println(priority, tag, action.toString());
         return next.next(action);
     }

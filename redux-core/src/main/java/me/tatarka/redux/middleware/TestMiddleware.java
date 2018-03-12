@@ -1,5 +1,6 @@
 package me.tatarka.redux.middleware;
 
+import me.tatarka.redux.Dispatcher;
 import me.tatarka.redux.Store;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ public class TestMiddleware<S, A, R> implements Middleware<A, R> {
     }
 
     @Override
-    public R dispatch(Next<A, R> next, A action) {
+    public R dispatch(Dispatcher<A, R> dispatcher, Next<A, R> next, A action) {
         actions.add(action);
         R result = next.next(action);
         states.add(store.getState());

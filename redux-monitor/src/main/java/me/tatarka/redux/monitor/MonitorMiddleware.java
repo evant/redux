@@ -16,6 +16,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import io.github.sac.BasicListener;
 import io.github.sac.Socket;
+import me.tatarka.redux.Dispatcher;
 import me.tatarka.redux.Store;
 import me.tatarka.redux.middleware.Middleware;
 
@@ -154,7 +155,7 @@ public class MonitorMiddleware<S, A, R> implements Middleware<A, R> {
     }
 
     @Override
-    public R dispatch(Next<A, R> next, A action) {
+    public R dispatch(Dispatcher<A, R> dispatcher, Next<A, R> next, A action) {
         R r = next.next(action);
         S state = store.getState();
         Message<S, A> message = new Message<>(state, action);

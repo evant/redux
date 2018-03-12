@@ -1,5 +1,7 @@
 package me.tatarka.redux.middleware;
 
+import me.tatarka.redux.Dispatcher;
+
 /**
  * Middleware allows you to implement cross-cutting concerns like logging, crash reporting, etc. by
  * intercepting every action.
@@ -14,7 +16,7 @@ public interface Middleware<A, R> {
      *               changed or not at all to drop the action.
      * @param action This action that was dispatched.
      */
-    R dispatch(Next<A, R> next, A action);
+    R dispatch(Dispatcher<A, R> dispatcher, Next<A, R> next, A action);
 
     interface Next<A, R> {
         R next(A action);

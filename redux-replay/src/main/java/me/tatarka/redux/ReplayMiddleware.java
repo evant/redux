@@ -24,7 +24,7 @@ public class ReplayMiddleware<S, A, R> implements Middleware<A, R> {
     }
 
     @Override
-    public R dispatch(Next<A, R> next, A action) {
+    public R dispatch(Dispatcher<A, R> dispatcher, Next<A, R> next, A action) {
         if (!runningActions) {
             actions.add(action);
         }
