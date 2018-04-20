@@ -1,6 +1,5 @@
 package me.tatarka.redux.monitor;
 
-
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFrame;
 
@@ -90,9 +89,7 @@ public class MonitorMiddleware<S, A, R> implements Middleware<A, R> {
                             json.put("instanceId", store.getClass());
 
                             socket.emit("log-noid", json);
-                        } catch (InterruptedException e) {
-                            break;
-                        } catch (JSONException e) {
+                        } catch (InterruptedException | JSONException e) {
                             break;
                         }
                     }

@@ -45,7 +45,7 @@ public class EditActionDialogFragment extends DialogFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        middleware = ViewModelProviders.of(getActivity()).get(TodoViewModel.class).getStore().getReplayMiddleware();
+        middleware = ViewModelProviders.of(requireActivity()).get(TodoViewModel.class).getStore().getReplayMiddleware();
         index = getArguments().getInt("index", -1);
     }
 
@@ -62,7 +62,7 @@ public class EditActionDialogFragment extends DialogFragment {
                 layout.addView(createInput(getContext(), field, action), new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             }
         }
-        return new AlertDialog.Builder(getContext(), getTheme())
+        return new AlertDialog.Builder(requireContext(), getTheme())
                 .setTitle("Edit " + action.getClass().getSimpleName())
                 .setView(layout)
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {

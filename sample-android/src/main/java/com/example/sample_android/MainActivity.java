@@ -7,6 +7,7 @@ import android.arch.lifecycle.LifecycleRegistryOwner;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -58,10 +59,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -69,19 +70,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        RecyclerView list = (RecyclerView) findViewById(R.id.list);
+        RecyclerView list = findViewById(R.id.list);
         list.setAdapter(adapter);
 
-        RecyclerView actionList = (RecyclerView) findViewById(R.id.action_list);
+        RecyclerView actionList = findViewById(R.id.action_list);
         actionList.setAdapter(actionListAdapter);
 
-        loading = (ProgressBar) findViewById(R.id.loading);
+        loading = findViewById(R.id.loading);
 
         TodoViewModel viewModel = ViewModelProviders.of(this).get(TodoViewModel.class);
         store = viewModel.getStore();
@@ -108,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -140,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
@@ -158,11 +159,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
+    @NonNull
     @Override
     public LifecycleRegistry getLifecycle() {
         return registry;
@@ -198,13 +200,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             result.dispatchUpdatesTo(this);
         }
 
+        @NonNull
         @Override
-        public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public Holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             return new Holder(store, LayoutInflater.from(parent.getContext()).inflate(R.layout.todo_item, parent, false));
         }
 
         @Override
-        public void onBindViewHolder(Holder holder, int position) {
+        public void onBindViewHolder(@NonNull Holder holder, int position) {
             holder.bind(items.get(position));
         }
 
@@ -221,11 +224,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             TodoItem item;
 
-            public Holder(final MainStore store, View itemView) {
+            Holder(final MainStore store, View itemView) {
                 super(itemView);
-                checkBox = (CheckBox) itemView.findViewById(R.id.item);
-                edit = (ImageButton) itemView.findViewById(R.id.edit);
-                delete = (ImageButton) itemView.findViewById(R.id.delete);
+                checkBox = itemView.findViewById(R.id.item);
+                edit = itemView.findViewById(R.id.edit);
+                delete = itemView.findViewById(R.id.delete);
                 this.store = store;
 
                 checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -252,7 +255,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 });
             }
 
-            public void bind(TodoItem item) {
+            void bind(TodoItem item) {
                 this.item = item;
                 checkBox.setText(item.text());
                 checkBox.setChecked(item.done());
@@ -269,13 +272,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             notifyDataSetChanged();
         }
 
+        @NonNull
         @Override
-        public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public Holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             return new Holder(LayoutInflater.from(parent.getContext()).inflate(R.layout.action_item, parent, false));
         }
 
         @Override
-        public void onBindViewHolder(Holder holder, int position) {
+        public void onBindViewHolder(@NonNull Holder holder, int position) {
             holder.bind(position, actions.get(position));
         }
 
@@ -289,9 +293,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             final TextView textView;
             int index;
 
-            public Holder(View itemView) {
+            Holder(View itemView) {
                 super(itemView);
-                textView = (TextView) itemView.findViewById(R.id.action);
+                textView = itemView.findViewById(R.id.action);
                 textView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -311,7 +315,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 });
             }
 
-            public void bind(int index, Object action) {
+            void bind(int index, Object action) {
                 this.index = index;
                 if (replayMiddleware.isDisabled(index)) {
                     SpannableString str = new SpannableString(action.toString());
