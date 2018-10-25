@@ -22,7 +22,7 @@ public abstract class Dispatcher<A, R> {
      * @param <A> The type of action.
      * @return the action dispatched.
      */
-    public static <S, A> Dispatcher<A, A> forStore(final Store<S> store, final Reducer<A, S> reducer) {
+    public static <S, A> Dispatcher<A, A> forStore(final Store<S> store, final Reducer<S, A> reducer) {
         if (store == null) {
             throw new NullPointerException("store==null");
         }
@@ -32,7 +32,7 @@ public abstract class Dispatcher<A, R> {
         return new Dispatcher<A, A>() {
             @Override
             public A dispatch(A action) {
-                store.setState(reducer.reduce(action, store.getState()));
+                store.setState(reducer.reduce(store.getState(), action));
                 return action;
             }
         };

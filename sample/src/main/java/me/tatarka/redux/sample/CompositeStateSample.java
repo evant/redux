@@ -1,6 +1,9 @@
 package me.tatarka.redux.sample;
 
-import me.tatarka.redux.*;
+import me.tatarka.redux.Dispatcher;
+import me.tatarka.redux.Reducer;
+import me.tatarka.redux.Reducers;
+import me.tatarka.redux.SimpleStore;
 import me.tatarka.redux.rx.ObservableAdapter;
 
 public class CompositeStateSample {
@@ -24,15 +27,15 @@ public class CompositeStateSample {
 
     // reducers
 
-    static <T> Reducer<Replace<T>, T> replace() {
-        return (action, state) -> action.newValue();
+    static <T> Reducer<T, Replace<T>> replace() {
+        return (state, action) -> action.newValue();
     }
 
-    static Reducer<Increment, Integer> increment = (action, state) -> state + 1;
+    static Reducer<Integer, Increment> increment = (state, action) -> state + 1;
 
-    static Reducer<Action, Person> updatePerson = Reducers.<Action, Person>matchClass()
-            .when(ChangeName.class, (action, state) -> new Person(CompositeStateSample.<String>replace().reduce(action, state.name), state.age))
-            .when(IncrementAge.class, (action, state) -> new Person(state.name, increment.reduce(action, state.age)));
+    static Reducer<Person, Action> updatePerson = Reducers.<Person, Action>matchClass()
+            .when(ChangeName.class, (state, action) -> new Person(CompositeStateSample.<String>replace().reduce(state.name, action), state.age))
+            .when(IncrementAge.class, (state, action) -> new Person(state.name, increment.reduce(state.age, action)));
 
     // actions
 

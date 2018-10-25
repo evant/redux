@@ -62,7 +62,7 @@ public class ObservableDispatcherTest {
         final SimpleStore<String> store = new SimpleStore<>("test");
         final Dispatcher<String, String> dispatcher = Dispatcher.forStore(store, new Reducer<String, String>() {
             @Override
-            public String reduce(String action, String state) {
+            public String reduce(String state, String action) {
                 return action;
             }
         });
@@ -89,7 +89,7 @@ public class ObservableDispatcherTest {
     public void dispatch_observable_action() {
         Reducer<String, String> reducer = new Reducer<String, String>() {
             @Override
-            public String reduce(String action, String state) {
+            public String reduce(String state, String action) {
                 return action;
             }
         };
@@ -106,7 +106,7 @@ public class ObservableDispatcherTest {
     public void dispatch_observable_multiple_actions() {
         Reducer<String, String> reducer = new Reducer<String, String>() {
             @Override
-            public String reduce(String action, String state) {
+            public String reduce(String state, String action) {
                 return action;
             }
         };
@@ -123,7 +123,7 @@ public class ObservableDispatcherTest {
     public void dispatch_single_action() {
         Reducer<String, String> reducer = new Reducer<String, String>() {
             @Override
-            public String reduce(String action, String state) {
+            public String reduce(String state, String action) {
                 return action;
             }
         };

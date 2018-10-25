@@ -5,9 +5,9 @@ import com.example.sample_android.state.TodoList;
 
 import me.tatarka.redux.Reducer;
 
-public class LoadReducer implements Reducer<Load, TodoList> {
+public class LoadReducer implements Reducer<TodoList, Load> {
     @Override
-    public TodoList reduce(Load action, TodoList state) {
+    public TodoList reduce(TodoList state, Load action) {
         return TodoList.create(false, action.items());
     }
 }

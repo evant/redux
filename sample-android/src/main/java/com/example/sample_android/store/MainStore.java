@@ -24,7 +24,7 @@ public class MainStore extends SimpleStore<TodoList> {
 
     public MainStore(Context context) {
         super(TodoList.initial());
-        Reducer<Action, TodoList> reducer = TodoListReducers.reducer();
+        Reducer<TodoList, Action> reducer = TodoListReducers.reducer();
         replayMiddleware = new ReplayMiddleware<>(this, reducer);
         monitorMiddleware = new MonitorMiddleware<>(this, new MonitorMiddleware.Config("10.0.2.2", 8000));
         dispatcher = Dispatcher.forStore(this, reducer)

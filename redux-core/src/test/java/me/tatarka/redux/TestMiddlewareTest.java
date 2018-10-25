@@ -23,7 +23,7 @@ public class TestMiddlewareTest {
     public void state_includes_state_after_action() {
         Reducer<String, String> reducer = new Reducer<String, String>() {
             @Override
-            public String reduce(String action, String state) {
+            public String reduce(String state, String action) {
                 return "test2";
             }
         };

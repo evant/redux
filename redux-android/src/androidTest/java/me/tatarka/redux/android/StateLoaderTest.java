@@ -39,7 +39,7 @@ public class StateLoaderTest {
     public void loader_delivers_changed_state() {
         Reducer<String, String> reducer = new Reducer<String, String>() {
             @Override
-            public String reduce(String action, String state) {
+            public String reduce(String state, String action) {
                 return action.toString();
             }
         };
@@ -58,7 +58,7 @@ public class StateLoaderTest {
     public void loader_ignores_state_changes_when_stopped() {
         Reducer<String, String> reducer = new Reducer<String, String>() {
             @Override
-            public String reduce(String action, String state) {
+            public String reduce(String state, String action) {
                 return action.toString();
             }
         };
@@ -81,7 +81,7 @@ public class StateLoaderTest {
     public void loader_includes_dispatched_stacktrace_on_failure() throws InterruptedException {
         Reducer<String, String> reducer = new Reducer<String, String>() {
             @Override
-            public String reduce(String action, String state) {
+            public String reduce(String state, String action) {
                 return action.toString();
             }
         };
@@ -125,7 +125,7 @@ public class StateLoaderTest {
     private static class ObservableStore<S> extends SimpleStore<S> {
         private final Dispatcher<String, String> dispatcher;
 
-        public ObservableStore(S initialState, Reducer<String, S> reducer) {
+        public ObservableStore(S initialState, Reducer<S, String> reducer) {
             super(initialState);
             dispatcher = Dispatcher.forStore(this, reducer);
         }

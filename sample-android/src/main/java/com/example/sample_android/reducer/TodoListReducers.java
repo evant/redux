@@ -12,8 +12,8 @@ import me.tatarka.redux.Reducers;
 
 public class TodoListReducers {
 
-    public static Reducer<Action, TodoList> reducer() {
-        return Reducers.<Action, TodoList>matchClass()
+    public static Reducer<TodoList, Action> reducer() {
+        return Reducers.<TodoList, Action>matchClass()
                 .when(Load.class, new LoadReducer())
                 .when(Add.class, new AddReducer())
                 .when(Remove.class, new RemoveReducer())
@@ -21,10 +21,10 @@ public class TodoListReducers {
                 .when(Check.class, updateItem(new CheckReducer()));
     }
 
-    public static <A extends UpdateItem> Reducer<A, TodoList> updateItem(final Reducer<A, TodoItem> reducer) {
-        return new Reducer<A, TodoList>() {
+    public static <A extends UpdateItem> Reducer<TodoList, A> updateItem(final Reducer<TodoItem, A> reducer) {
+        return new Reducer<TodoList, A>() {
             @Override
-            public TodoList reduce(A action, TodoList state) {
+            public TodoList reduce(TodoList state, A action) {
                 List<TodoItem> items = new ArrayList<>(state.items());
                 int index = -1;
                 TodoItem item = null;
@@ -37,7 +37,7 @@ public class TodoListReducers {
                     }
                 }
                 if (item != null) {
-                    items.set(index, reducer.reduce(action, item));
+                    items.set(index, reducer.reduce(item, action));
                 }
                 return TodoList.create(state.loading(), items);
             }

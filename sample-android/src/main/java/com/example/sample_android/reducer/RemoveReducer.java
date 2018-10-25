@@ -9,9 +9,9 @@ import java.util.List;
 
 import me.tatarka.redux.Reducer;
 
-public class RemoveReducer implements Reducer<Remove, TodoList> {
+public class RemoveReducer implements Reducer<TodoList, Remove> {
     @Override
-    public TodoList reduce(Remove action, TodoList state) {
+    public TodoList reduce(TodoList state, Remove action) {
         List<TodoItem> items = new ArrayList<>(state.items());
         for (int i = 0; i < items.size(); i++) {
             TodoItem item = items.get(i);

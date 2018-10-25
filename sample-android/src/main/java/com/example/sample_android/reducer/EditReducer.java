@@ -5,10 +5,10 @@ import com.example.sample_android.state.TodoItem;
 
 import me.tatarka.redux.Reducer;
 
-public class EditReducer implements Reducer<Edit, TodoItem> {
+public class EditReducer implements Reducer<TodoItem, Edit> {
 
     @Override
-    public TodoItem reduce(Edit action, TodoItem item) {
+    public TodoItem reduce(TodoItem item, Edit action) {
         return TodoItem.create(item.id(), action.text(), item.done());
     }
 }
