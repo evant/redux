@@ -109,18 +109,18 @@ probably don't want it on release. A common pattern would be to put
 It's common you'd want to switch on actions values or class type. `Reducers.matchValue()` and
 `Reducers.matchClass()` makes this easy.
 ```java
-Reducer<String, State> reducer = Reducers.matchValue()
+Reducer<State, String> reducer = Reducers.matchValue()
   .when("action1", new Action1Reducer())
   .when("action2", new Action2Reducer());
 
-Reducer<Object, State> reducer = Reducers.matchClass()
+Reducer<State, Object> reducer = Reducers.matchClass()
   .when(Action1.class, new Action1Reducer())
   .when(Action2.class, new Action2Reducer());
 ```
 
 There is also `Reducers.match()` which takes a predicate for more complicated matching setups.
 ```java
-Reducer<Object, State> reducer = Reducers.match()
+Reducer<State, Object> reducer = Reducers.match()
   .when(Predicates.is("action1"), new Action1Reducer())
   .when(Predicates.instanceOf(Action2.class), new Action2Reducer());
 ```

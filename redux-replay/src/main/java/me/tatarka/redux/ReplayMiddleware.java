@@ -17,7 +17,7 @@ public class ReplayMiddleware<S, A, R> implements Middleware<A, R> {
     private final Set<Integer> disabled = new HashSet<>();
     private boolean runningActions;
 
-    public ReplayMiddleware(Store<S> store, Reducer<A, S> reducer) {
+    public ReplayMiddleware(Store<S> store, Reducer<S, A> reducer) {
         this.initialState = store.getState();
         this.store = store;
         this.dispatcher = Dispatcher.forStore(store, reducer);

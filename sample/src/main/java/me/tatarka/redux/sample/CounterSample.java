@@ -7,10 +7,10 @@ public class CounterSample {
 
     // reducers
 
-    static final Reducer<Increment, Integer> increment = (action, state) -> state + 1;
-    static final Reducer<Add, Integer> add = (action, state) -> state + action.value;
+    static final Reducer<Integer, Increment> increment = (state, action) -> state + 1;
+    static final Reducer<Integer, Add> add = (state, action) -> state + action.value;
 
-    static final Reducer<Action, Integer> counter = Reducers.<Action, Integer>matchClass()
+    static final Reducer<Integer, Action> counter = Reducers.<Integer, Action>matchClass()
             .when(Increment.class, increment)
             .when(Add.class, add);
 

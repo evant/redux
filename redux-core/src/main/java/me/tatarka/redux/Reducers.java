@@ -10,7 +10,7 @@ public class Reducers {
 
     private static final Reducer ID = new Reducer() {
         @Override
-        public Object reduce(Object a, Object s) {
+        public Object reduce(Object s, Object a) {
             return s;
         }
     };
@@ -19,7 +19,7 @@ public class Reducers {
      * A reducers that does nothing, i.e. returns the state as-is.
      */
     @SuppressWarnings("unchecked")
-    public static <A, S> Reducer<A, S> id() {
+    public static <S, A> Reducer<S, A> id() {
         return ID;
     }
 
@@ -27,16 +27,16 @@ public class Reducers {
      * Runs all given reducers in sequence, giving the resulting state of one to the next.
      */
     @SafeVarargs
-    public static <A, S> Reducer<A, S> all(final Reducer<A, S>... reducers) {
+    public static <S, A> Reducer<S, A> all(final Reducer<S, A>... reducers) {
         if (reducers == null) {
             throw new NullPointerException("reducers == null");
         }
-        return new Reducer<A, S>() {
+        return new Reducer<S, A>() {
             @Override
-            public S reduce(A a, S s) {
+            public S reduce(S s, A a) {
                 S newState = s;
-                for (Reducer<A, S> reducer : reducers) {
-                    newState = reducer.reduce(a, newState);
+                for (Reducer<S, A> reducer : reducers) {
+                    newState = reducer.reduce(newState, a);
                 }
                 return newState;
             }
@@ -47,15 +47,15 @@ public class Reducers {
      * Runs all reducers in sequence until the state is changed.
      */
     @SafeVarargs
-    public static <A, S> Reducer<A, S> first(final Reducer<A, S>... reducers) {
+    public static <S, A> Reducer<S, A> first(final Reducer<S, A>... reducers) {
         if (reducers == null) {
             throw new NullPointerException("reducers == null");
         }
-        return new Reducer<A, S>() {
+        return new Reducer<S, A>() {
             @Override
-            public S reduce(A a, S s) {
-                for (Reducer<A, S> reducer : reducers) {
-                    S newState = reducer.reduce(a, s);
+            public S reduce(S s, A a) {
+                for (Reducer<S, A> reducer : reducers) {
+                    S newState = reducer.reduce(s, a);
                     if (!newState.equals(s)) {
                         return newState;
                     }
@@ -65,19 +65,19 @@ public class Reducers {
         };
     }
 
-    public static <A, S> MatchReducer<A, S> match() {
+    public static <S, A> MatchReducer<S, A> match() {
         return new MatchReducer<>();
     }
 
-    public static <A, S> MatchClassReducer<A, S> matchClass() {
+    public static <S, A> MatchClassReducer<S, A> matchClass() {
         return new MatchClassReducer<>();
     }
 
-    public static <A, S> MatchValueReducer<A, S> matchValue() {
+    public static <S, A> MatchValueReducer<S, A> matchValue() {
         return new MatchValueReducer<>();
     }
 
-    static abstract class BaseMatchReducer<A, S, M> implements Reducer<A, S> {
+    static abstract class BaseMatchReducer<S, A, M> implements Reducer<S, A> {
         private List<M> matchers = new ArrayList<>();
         private List<Reducer> reducers = new ArrayList<>();
 
@@ -97,10 +97,10 @@ public class Reducers {
 
         @Override
         @SuppressWarnings("unchecked")
-        public S reduce(A action, S state) {
+        public S reduce(S state, A action) {
             for(int i = 0; i < matchers.size(); i++) {
                 if(match(matchers.get(i), action)) {
-                    return (S) reducers.get(i).reduce(action, state);
+                    return (S) reducers.get(i).reduce(state, action);
                 }
             }
             return state;
@@ -110,12 +110,12 @@ public class Reducers {
     }
 
 
-    public static class MatchReducer<A, S> extends BaseMatchReducer<A, S, Predicate> {
+    public static class MatchReducer<S, A> extends BaseMatchReducer<S, A, Predicate> {
 
         MatchReducer() {
         }
 
-        public <RA extends A> MatchReducer<A, S> when(Predicate<A, RA> predicate, Reducer<? super RA, S> reducer) {
+        public <RA extends A> MatchReducer<S, A> when(Predicate<A, RA> predicate, Reducer<S, ? super RA> reducer) {
             put(predicate, reducer);
             return this;
         }
@@ -127,9 +127,9 @@ public class Reducers {
         }
     }
 
-    public static class MatchClassReducer<A, S> extends BaseMatchReducer<A, S, Class> {
+    public static class MatchClassReducer<S, A> extends BaseMatchReducer<S, A, Class> {
 
-        public <RA extends A> MatchClassReducer<A, S> when(Class<RA> actionClass, Reducer<? super RA, S> reducer) {
+        public <RA extends A> MatchClassReducer<S, A> when(Class<RA> actionClass, Reducer<S, ? super RA> reducer) {
             put(actionClass, reducer);
             return this;
         }
@@ -140,9 +140,9 @@ public class Reducers {
         }
     }
 
-    public static class MatchValueReducer<A, S> extends BaseMatchReducer<A, S, Object> {
+    public static class MatchValueReducer<S, A> extends BaseMatchReducer<S, A, Object> {
 
-        public <RA extends A> MatchValueReducer<A, S> when(RA value, Reducer<? super RA, S> reducer) {
+        public <RA extends A> MatchValueReducer<S, A> when(RA value, Reducer<S, ? super RA> reducer) {
             put(value, reducer);
             return this;
         }
