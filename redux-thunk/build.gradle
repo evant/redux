@@ -4,6 +4,6 @@ apply from: '../publish.gradle'
 sourceCompatibility = 1.7
 
 dependencies {
-    compile project(':redux-core')
-    testCompile 'junit:junit:4.12'
+    implementation project(':redux-core')
+    testImplementation 'junit:junit:4.12'
 }
