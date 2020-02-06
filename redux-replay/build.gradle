@@ -8,6 +8,6 @@ repositories {
 }
 
 dependencies {
-    compile project(':redux-core')
-    testCompile 'junit:junit:4.12'
+    implementation project(':redux-core')
+    testImplementation 'junit:junit:4.12'
 }

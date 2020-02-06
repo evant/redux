@@ -3,7 +3,7 @@ apply plugin: 'java'
 sourceCompatibility = 1.8
 
 dependencies {
-    compile project(':redux-core')
-    compile project(':redux-rx')
-    compile 'io.reactivex:rxjava:1.2.1'
+    implementation project(':redux-core')
+    implementation project(':redux-rx')
+    implementation 'io.reactivex:rxjava:1.2.1'
 }

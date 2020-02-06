@@ -4,6 +4,6 @@ apply from: '../publish.gradle'
 sourceCompatibility = 1.7
 
 dependencies {
-    testCompile 'io.reactivex:rxjava:1.2.1'
-    testCompile 'junit:junit:4.12'
+    testImplementation 'io.reactivex:rxjava:1.2.1'
+    testImplementation 'junit:junit:4.12'
 }
