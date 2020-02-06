@@ -18,12 +18,6 @@ jobs:
       - run:
           name: Run Tests
           command: ./gradlew test
-      - gradle/collect_test_results:
-          test_results_path: shard-nav/build/test-results
-          reports_path: shard-nav/build/reports
-      - gradle/collect_test_results:
-          test_results_path: shard-pager/build/test-results
-          reports_path: shard-pager/build/reports
       - deploy:
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
