@@ -1,9 +1,9 @@
-apply plugin: 'java'
+apply plugin: 'java-library'
 apply from: '../publish.gradle'
 
 sourceCompatibility = 1.7
 
 dependencies {
-    implementation project(':redux-core')
+    api project(':redux-core')
     testImplementation 'junit:junit:4.12'
 }

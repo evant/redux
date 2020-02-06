@@ -1,6 +1,5 @@
-apply plugin: 'maven-publish'
 apply plugin: 'signing'
-apply plugin: 'pom'
+apply plugin: 'digital.wup.android-maven-publish'
 
 def isAndroid = plugins.hasPlugin('com.android.library')
 
@@ -28,48 +27,8 @@ task sourcesJar(type: Jar) {
     }
 }
 
-artifacts {
-    archives sourcesJar
-    archives javadocsJar
-}
-
-signing {
-    required { signatory != null && project.ext.isReleaseVersion }
-    sign configurations.archives
-}
-
 def siteUrl = 'https://github.com/evant/redux'
 def gitUrl = 'https://github.com/evant/redux.git'
-
-pom {
-    name project.name
-    if (isAndroid) {
-        packaging 'aar'
-    }
-    description 'Redux ported to java/android'
-    url siteUrl
-
-    scm {
-        url siteUrl
-        connection gitUrl
-        developerConnection gitUrl
-    }
-
-    licenses {
-        license {
-            name 'The Apache Software License, Version 2.0'
-            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-            distribution 'repo'
-        }
-    }
-
-    developers {
-        developer {
-            id 'evant'
-            name 'Evan Tatarka'
-        }
-    }
-}
 
 publishing {
     repositories {
@@ -90,7 +49,7 @@ publishing {
     publications {
         lib(MavenPublication) {
             if (isAndroid) {
-                artifact "$buildDir/outputs/aar/${project.name}-release.aar"
+                from components.android
             } else {
                 from components.java
             }
@@ -98,15 +57,29 @@ publishing {
             artifact sourcesJar
             artifact javadocsJar
 
-            if (signing.required) {
-                // Sign the artifacts.
-                project.tasks.signArchives.signatureFiles.each {
-                    artifact(it) {
-                        def matcher = it.file =~ /-?(?<classifier>sources|javadoc)?\.(?<extension>jar|aar)\.asc$/
-                        if (matcher.find()) {
-                            classifier = matcher.group('classifier')
-                            extension = matcher.group('extension') + '.asc'
-                        }
+            pom {
+                name = project.name
+                description = 'Redux ported to java/android'
+                url = siteUrl
+
+                scm {
+                    url = siteUrl
+                    connection = gitUrl
+                    developerConnection = gitUrl
+                }
+
+                licenses {
+                    license {
+                        name = 'The Apache Software License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        distribution = 'repo'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'evant'
+                        name = 'Evan Tatarka'
                     }
                 }
             }
@@ -114,29 +87,8 @@ publishing {
     }
 }
 
-if (signing.required) {
-    project.afterEvaluate {
-         // Sign the pom.xml.
-	 publishing.publications.lib(MavenPublication) {
-             pom.withXml {
-                 writeTo(project.ext.pomFile)
-                 def pomAscFile = signing.sign(project.ext.pomFile).signatureFiles[0]
-                 artifact(pomAscFile) {
-                     classifier = null
-                     extension = 'pom.asc'
-                 }
-                 project.ext.pomFile.delete()
-             }
-	 }
-    }
-}
-
-model {
-    tasks.publishLibPublicationToMavenLocal {
-        dependsOn(project.tasks.signArchives)
-    }
-
-    tasks.publishLibPublicationToMavenRepository {
-        dependsOn(project.tasks.signArchives)
+if (project.ext.isReleaseVersion) {
+    signing {
+        sign publishing.publications.lib
     }
 }

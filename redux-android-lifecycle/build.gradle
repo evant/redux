@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 apply from: '../publish.gradle'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 29
 
     defaultConfig {
         minSdkVersion 14
@@ -15,9 +15,9 @@ android {
 }
 
 dependencies {
-    implementation project(':redux-core')
-    implementation project(':redux-android')
-    api "android.arch.lifecycle:runtime:1.0.0-alpha9"
-    api "android.arch.lifecycle:extensions:1.0.0-alpha9"
-    annotationProcessor "android.arch.lifecycle:compiler:1.0.0-alpha9"
+    api project(':redux-core')
+    api project(':redux-android')
+    api "android.arch.lifecycle:runtime:1.0.0"
+    api "android.arch.lifecycle:extensions:1.0.0"
+    annotationProcessor "android.arch.lifecycle:compiler:1.0.0"
 }
