@@ -21,7 +21,7 @@ repositories {
 dependencies {
   compile "me.tatarka.redux:redux-core:0.11"
   compile "me.tatarka.redux:redux-android:0.11"
-  compile "me.tatarka.redux:redux-android-lifecycle:0.12"
+  compile "me.tatarka.redux:redux-android-lifecycle:0.11"
   compile "me.tatarka.redux:redux-thunk:0.11"
   compile "me.tatarka.redux:redux-rx:0.11"
   compile "me.tatarka.redux:redux-rx2:0.11"
@@ -243,7 +243,7 @@ remotedev --hostname=localhost --port=8000
 ```
 
 ```groovy
-compile "me.tatarka.redux:redux-monitor:0.10"
+compile "me.tatarka.redux:redux-monitor:0.11"
 ```
 
 ```java
