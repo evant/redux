@@ -1,9 +1,9 @@
 package me.tatarka.redux.android.lifecycle;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.ViewModel;
-import android.support.annotation.MainThread;
-import android.support.annotation.NonNull;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModel;
+import androidx.annotation.MainThread;
+import androidx.annotation.NonNull;
 
 import me.tatarka.redux.SimpleStore;
 

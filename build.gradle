@@ -16,7 +16,8 @@ allprojects {
     version '0.11-SNAPSHOT'
 
     repositories {
+        mavenCentral()
+        google()
         jcenter()
-        maven { url 'https://maven.google.com' }
     }
 }
