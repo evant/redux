@@ -10,6 +10,8 @@ implementations.
 * A fully-fleshed-out android sample.
 
 ## Download
+[![Maven Central](https://img.shields.io/maven-central/v/me.tatarka.redux/redux-core.svg)](https://search.maven.org/search?q=g:me.tatarka.redux)
+[![Sonatype Snapshot](https://img.shields.io/nexus/s/https/oss.sonatype.org/me.tatarka.redux/redux-core.svg)](https://oss.sonatype.org/content/repositories/snapshots/me/tatarka/redux/)
 
 ```groovy
 repositories {
