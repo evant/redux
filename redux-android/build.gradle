@@ -2,10 +2,10 @@ apply plugin: 'com.android.library'
 apply from: '../publish.gradle'
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 27
 
     defaultConfig {
-        minSdkVersion 11
+        minSdkVersion 14
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -14,7 +14,7 @@ android {
 
 dependencies {
     implementation project(':redux-core')
-    implementation 'com.android.support:support-v4:25.3.1'
+    implementation 'com.android.support:support-v4:27.1.1'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test:rules:1.0.1'
